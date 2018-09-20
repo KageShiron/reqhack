@@ -2,12 +2,12 @@ package main
 
 import (
 	"./db"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -67,8 +67,10 @@ func ItemsHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "No log")
 		return
 	}
-
-	fmt.Fprint(w, res)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if json.NewEncoder(w).Encode(res); err != nil {
+		fmt.Fprint(w, "Error")
+	}
 }
 
 // InHandler is a handler of (ANY) /v1/id/in/*
@@ -82,31 +84,29 @@ func InHandler(w http.ResponseWriter, r *http.Request) {
 		println(vars["id"])
 		return
 	}
-	w.WriteHeader(200)
-	bin.WriteLog(db.Request{Time: time.Now(), Request: r})
+	w.WriteHeader(http.StatusOK)
+	req, err := db.NewRequest(time.Now(), r)
+	if err != nil {
+		w.Write([]byte("Error"))
+		return
+	}
+	bin.WriteLog(req)
 
 	w.Write([]byte(r.RemoteAddr))
 	println(vars["id"])
 }
 
 func main() {
-	mux := mux.NewRouter().StrictSlash(false)
+	router := mux.NewRouter().StrictSlash(false)
 
-	mux.HandleFunc("/v1/{id}/{_:create/?}", CreateHandler).Methods("POST")
-	mux.HandleFunc("/v1/{id}/items", ItemsHandler).Methods("GET")
-	mux.HandleFunc("/v1/{id}/items/{num:[0-9]+(?:\\/)?}", ItemsHandler).Methods("GET")
-	mux.HandleFunc("/v1/{id}/{_:in(?:/.*|$)}", InHandler)
+	router.HandleFunc("/v1/{id}/{_:create/?}", CreateHandler).Methods("POST")
+	router.HandleFunc("/v1/{id}/items", ItemsHandler).Methods("GET")
+	router.HandleFunc("/v1/{id}/items/{num:[0-9]+(?:\\/)?}", ItemsHandler).Methods("GET")
+	router.HandleFunc("/v1/{id}/{_:in(?:/.*|$)}", InHandler)
 	srv := &http.Server{
 		Addr:    "localhost:8081",
-		Handler: mux, // Pass our instance of gorilla/mux in.
+		Handler: router, // Pass our instance of gorilla/router in.
 	}
 
 	srv.ListenAndServe()
-}
-
-func trimSlashMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
-		next.ServeHTTP(w, r)
-	})
 }
