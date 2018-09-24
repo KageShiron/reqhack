@@ -17,9 +17,20 @@
   revision = "e3702bed27f0d39777b0b37b664b6280e8ef8fbf"
   version = "v1.6.2"
 
+[[projects]]
+  branch = "master"
+  digest = "1:a79dc80dd3154f4fe8d924d19d48d63c22f25fa9e66da497d9ebb037805d7eb1"
+  name = "github.com/unrolled/render"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b9786414de4d903830df7ac38eea68a0e3267a35"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/gorilla/mux"]
+  input-imports = [
+    "github.com/gorilla/mux",
+    "github.com/unrolled/render",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

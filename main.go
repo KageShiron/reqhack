@@ -1,103 +1,114 @@
 package main
 
 import (
-	"./db"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"log"
+	"github.com/unrolled/render"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/KageShiron/reqhack/db"
+	"github.com/gorilla/mux"
 )
 
-var man *db.BinManager = db.NewBinManager()
+type simpleResponse struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+}
+
+func restError(w http.ResponseWriter, code int, message string) {
+	e := simpleResponse{Message: message, Code: code}
+	ren.JSON(w, code, map[string]simpleResponse{"error": e})
+}
+
+func restSucceed(w http.ResponseWriter, code int, message string) {
+	e := simpleResponse{Message: message, Code: code}
+	ren.JSON(w, code, map[string]simpleResponse{"success": e})
+}
+
+var man = db.NewBinManager()
+var ren *render.Render
 
 // CreateHandler is a handler of (POST) /v1/{id}/create
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	v, ok := vars["id"]
 	if !ok {
-		log.Println("create error")
-		w.WriteHeader(400)
-		fmt.Fprint(w, "error")
+		restError(w, 400, "Invalid id")
+		return
 	}
 
 	if bin := man.Create(v); bin == nil {
-		w.WriteHeader(500)
-		fmt.Fprint(w, "error")
-
-	} else {
-		w.WriteHeader(200)
-		fmt.Fprint(w, "success create "+v)
+		restError(w, 500, "Couldn't create bin")
+		return
 	}
+
+	restSucceed(w, 200, "Created "+v+" bin")
 }
 
 // ItemsHandler is a handler of (GET) /v1/{id}/items/{num}
 func ItemsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	v, ok := vars["id"]
+	id, ok := vars["id"]
 	if !ok {
-		w.WriteHeader(400)
-		fmt.Fprint(w, "bad id")
+		restError(w, 400, "Invalid id")
+		return
 	}
 
 	num, ok := vars["num"]
 	if !ok {
-		w.WriteHeader(400)
-		fmt.Fprint(w, "Bad index")
+		restError(w, 400, "Invalid index")
+		return
 	}
 
 	index, err := strconv.Atoi(num)
 	if err != nil {
-		w.WriteHeader(400)
-		fmt.Fprint(w, "Bad index")
+		restError(w, 400, "Invalid index")
 		return
 	}
 
-	bin := man.Bin(v)
+	bin := man.Bin(id)
 	if bin == nil {
-		w.WriteHeader(404)
-		fmt.Fprint(w, "No bin")
+		restError(w, 404, fmt.Sprintf(`Bin "%s" not found`, id))
 		return
 	}
 
 	res, err := bin.ReadLog(index)
 	if err != nil {
-		fmt.Fprint(w, "No log")
+		restError(w, 404, fmt.Sprintf(`Log "#%d" not found`, index))
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if json.NewEncoder(w).Encode(res); err != nil {
-		fmt.Fprint(w, "Error")
+		restError(w, 500, fmt.Sprintf(`Failed to create JSON`))
 	}
 }
 
 // InHandler is a handler of (ANY) /v1/id/in/*
 func InHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	bin := man.Bin(vars["id"])
+	id := vars["id"]
+	bin := man.Bin(id)
 	if bin == nil {
-		w.WriteHeader(404)
-
-		w.Write([]byte("BadRequest"))
-		println(vars["id"])
+		restError(w, 404, fmt.Sprintf(`Bin "%s" not found`, id))
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 	req, err := db.NewRequest(time.Now(), r)
 	if err != nil {
-		w.Write([]byte("Error"))
+		restError(w, 500, "Failed to create JSON")
 		return
 	}
 	bin.WriteLog(req)
 
-	w.Write([]byte(r.RemoteAddr))
+	restSucceed(w, 200, r.RemoteAddr)
 	println(vars["id"])
 }
 
 func main() {
 	router := mux.NewRouter().StrictSlash(false)
+	ren = render.New()
 
 	router.HandleFunc("/v1/{id}/{_:create/?}", CreateHandler).Methods("POST")
 	router.HandleFunc("/v1/{id}/items", ItemsHandler).Methods("GET")
