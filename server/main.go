@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/KageShiron/reqhack/db"
+	"github.com/KageShiron/reqhack/server/db"
 	"github.com/gorilla/mux"
 )
 
