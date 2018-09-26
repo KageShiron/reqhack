@@ -71,10 +71,15 @@ func (bin Bin) ReadLog(no int) (req *Request, err error) {
 
 // ReadLogs returns Http Request Logs
 func (bin Bin) ReadLogs(index int, length int) (requests []*Request, err error) {
-	if len(*bin.reqs) > index+length {
+	loglength := len(*bin.reqs)
+	if loglength < index {
 		return nil, fmt.Errorf("out of range")
 	}
-	return (*bin.reqs)[index : index+length], nil
+	if index+length > loglength {
+		return (*bin.reqs)[index:loglength], nil
+	}
+
+	return (*bin.reqs)[index:(index + length)], nil
 }
 
 // Length returns the length of the log records

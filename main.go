@@ -40,7 +40,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if bin := man.Create(v); bin == nil {
-		restError(w, 500, "Couldn't create bin")
+		restError(w, 500, fmt.Sprintf("Bin %s already exists.", v))
 		return
 	}
 
@@ -56,21 +56,25 @@ func ItemsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	bin := man.Bin(id)
+	if bin == nil {
+		restError(w, 404, fmt.Sprintf(`Bin "%s" not found`, id))
+		return
+	}
+
 	num, ok := vars["num"]
-	if !ok {
-		restError(w, 400, "Invalid index")
+	if !ok || num == "" {
+		logs, err := bin.ReadLogs(0, 100)
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		if json.NewEncoder(w).Encode(logs); err != nil {
+			restError(w, 500, fmt.Sprintf(`Failed to create JSON`))
+		}
 		return
 	}
 
 	index, err := strconv.Atoi(num)
 	if err != nil {
 		restError(w, 400, "Invalid index")
-		return
-	}
-
-	bin := man.Bin(id)
-	if bin == nil {
-		restError(w, 404, fmt.Sprintf(`Bin "%s" not found`, id))
 		return
 	}
 
@@ -112,7 +116,7 @@ func main() {
 
 	router.HandleFunc("/v1/{id}/{_:create/?}", CreateHandler).Methods("POST")
 	router.HandleFunc("/v1/{id}/items", ItemsHandler).Methods("GET")
-	router.HandleFunc("/v1/{id}/items/{num:[0-9]+(?:\\/)?}", ItemsHandler).Methods("GET")
+	router.HandleFunc("/v1/{id}/items/{num:[0-9]*(?:\\/)?}", ItemsHandler).Methods("GET")
 	router.HandleFunc("/v1/{id}/{_:in(?:/.*|$)}", InHandler)
 	srv := &http.Server{
 		Addr:    "localhost:8081",
