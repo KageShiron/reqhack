@@ -27,7 +27,7 @@ func restSucceed(w http.ResponseWriter, code int, message string) {
 	ren.JSON(w, code, map[string]simpleResponse{"success": e})
 }
 
-var man = db.NewBinManager()
+var man = db.NewMysqlBinManager()
 var ren *render.Render
 
 // CreateHandler is a handler of (POST) /v1/{id}/create
