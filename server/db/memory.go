@@ -1,6 +1,9 @@
 package db
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/pkg/errors"
+)
 
 // MemoryBin represents a requests bin box on memory.
 type MemoryBin struct {
@@ -15,7 +18,7 @@ func (bin MemoryBin) WriteLog(request *Request) (err error) {
 
 // ReadLog returns a log
 func (bin MemoryBin) ReadLog(no int) (req *Request, err error) {
-	if len(*bin.reqs) <= no {
+	if no < 0 || len(*bin.reqs) <= no {
 		return nil, fmt.Errorf("out of range")
 	}
 	return (*bin.reqs)[no], nil
@@ -24,9 +27,15 @@ func (bin MemoryBin) ReadLog(no int) (req *Request, err error) {
 // ReadLogs returns Http Request Logs
 func (bin MemoryBin) ReadLogs(index int, length int) (requests []*Request, err error) {
 	loglength := len(*bin.reqs)
-	if loglength < index {
-		return nil, fmt.Errorf("out of range")
+
+	if length <= 0 {
+		return nil, errors.New("invalid param")
 	}
+
+	if index < 0 || index >= loglength {
+		return nil, errors.New("out of range")
+	}
+
 	if index+length > loglength {
 		return (*bin.reqs)[index:loglength], nil
 	}

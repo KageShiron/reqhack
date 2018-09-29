@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+var ()
+
 // A Request represents a log record of HTTP Request.
 type Request struct {
 	Time          time.Time       `json:"time"`
