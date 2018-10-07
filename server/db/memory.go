@@ -61,7 +61,7 @@ func NewMemoryBinManager() *MemoryBinManager {
 }
 
 // Create return new Bin object.
-func (man *MemoryBinManager) Create(binID string) *MemoryBin {
+func (man *MemoryBinManager) Create(binID string) Bin {
 	_, ok := man.save[binID]
 	if ok {
 		return nil
@@ -73,7 +73,7 @@ func (man *MemoryBinManager) Create(binID string) *MemoryBin {
 }
 
 // Bin returns bin which binID pointing
-func (man *MemoryBinManager) Bin(binID string) *MemoryBin {
+func (man *MemoryBinManager) Bin(binID string) Bin {
 	b, ok := man.save[binID]
 	if !ok {
 		return nil

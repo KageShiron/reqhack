@@ -85,9 +85,8 @@ func (bin *MysqlBin) Length() (len int) {
 //////////
 
 // NewMysqlBinManager returns a pointer of a new BinManager for mysql
-func NewMysqlBinManager() *MysqlBinManager {
-
-	db, err := sql.Open("mysql", "root:mysql@tcp(192.168.99.100:3306)/reqhack")
+func NewMysqlBinManager(dataSourceName string) *MysqlBinManager {
+	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		log.Fatal(err.Error())
 		return nil
@@ -96,7 +95,7 @@ func NewMysqlBinManager() *MysqlBinManager {
 }
 
 // Create return new Bin object.
-func (man *MysqlBinManager) Create(binID string) *MysqlBin {
+func (man *MysqlBinManager) Create(binID string) Bin {
 	res, err := man.db.Exec("INSERT INTO `bin` (name) VALUES (?)", binID)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -111,7 +110,7 @@ func (man *MysqlBinManager) Create(binID string) *MysqlBin {
 }
 
 // Bin returns bin which binID pointing
-func (man *MysqlBinManager) Bin(binID string) *MysqlBin {
+func (man *MysqlBinManager) Bin(binID string) Bin {
 	row := man.db.QueryRow("SELECT (id) FROM bin WHERE name=?", binID)
 	if row == nil {
 		return nil

@@ -59,6 +59,6 @@ type Bin interface {
 
 // A BinManager managements bins
 type BinManager interface {
-	Create(binID string) *Bin
-	Bin(binID string) *Bin
+	Create(binID string) Bin
+	Bin(binID string) Bin
 }
