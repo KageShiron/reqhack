@@ -9,7 +9,14 @@ import (
 	"time"
 )
 
-var ()
+// A Responser represents dummy response config
+type Responser struct {
+	Path       string      `json:"path"`
+	StatusCode int         `json:"status_code"`
+	Proto      string      `json:"proto"`
+	Header     http.Header `json:"header"`
+	Body       []byte      `json:"body"`
+}
 
 // A Request represents a log record of HTTP Request.
 type Request struct {
@@ -54,6 +61,8 @@ type Bin interface {
 	WriteLog(request *Request) (err error)
 	ReadLog(no int) (req *Request, err error)
 	ReadLogs(index int, length int) (requests []*Request, err error)
+	SetResponser(item Responser)
+	GetResponser(item Responser)
 	Length() int
 }
 

@@ -3,7 +3,9 @@ package db
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
+	"net/url"
 
 	// mySql driver
 	_ "github.com/go-sql-driver/mysql"
@@ -46,6 +48,36 @@ func (bin *MysqlBin) ReadLog(no int) (req *Request, err error) {
 		return
 	}
 	err = json.Unmarshal(res, req)
+	return
+}
+
+// SetResponser sets a responser
+func (bin *MysqlBin) SetResponser(data Responser) {
+	mar, err := json.Marshal(data)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	_, err = bin.manager.db.Exec("INSERT INTO `response` (bin,data) VALUES (?,?)", bin.id, mar)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return
+}
+
+// GetResponser gets a responser
+func (bin *MysqlBin) GetResponser(reqURL string) (responser *Responser, err error) {
+	u, err := url.Parse(reqURL)
+	if err != nil {
+		return nil, fmt.Errorf("bad url")
+	}
+	row := bin.manager.db.QueryRow("SELECT (data) FROM `responser` WHERE bin=? AND path = BINARY ?", bin.id, u.Path)
+	var res []byte
+	responser = &Responser{}
+	err = row.Scan(&res)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(res, responser)
 	return
 }
 

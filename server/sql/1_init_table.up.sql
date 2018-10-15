@@ -12,3 +12,11 @@ CREATE TABLE `request` (
   `data` JSON,
   FOREIGN KEY (bin) REFERENCES bin(id)
 );
+
+CREATE TABLE `responser` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `bin` INT NOT NULL,
+  `path` VARCHAR (256) NOT NULL UNIQUE,
+  `data` JSON,
+  FOREIGN KEY (bin) REFERENCES bin(id)
+);

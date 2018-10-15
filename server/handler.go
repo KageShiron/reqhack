@@ -6,12 +6,13 @@ import (
 	"github.com/KageShiron/reqhack/server/db"
 	"github.com/gorilla/mux"
 	"github.com/unrolled/render"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
 )
 
-var man = db.NewMysqlBinManager()
+var man = db.NewMysqlBinManager("root:mysql@tcp(192.168.99.100:3306)/reqhack")
 var ren = render.New()
 
 type simpleResponse struct {
@@ -107,4 +108,32 @@ func InHandler(w http.ResponseWriter, r *http.Request) {
 
 	restSucceed(w, 200, r.RemoteAddr)
 	println(vars["id"])
+}
+
+// ResponseHandler is a handler of POST /v1/id/response
+func ResponseHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	bin := man.Bin(id)
+	if bin == nil {
+		restError(w, 404, fmt.Sprintf(`Bin "%s" not found`, id))
+		return
+	}
+	body, err := r.GetBody()
+	if err != nil {
+		restError(w, 400, fmt.Sprintf(`Invalid Body`))
+		return
+	}
+	res := &db.Responser{}
+	b, err := ioutil.ReadAll(body)
+	if err != nil {
+		restError(w, 400, fmt.Sprintf(`Invalid Body`))
+		return
+	}
+	err = json.Unmarshal(b, res)
+	if err == nil {
+		restError(w, 400, fmt.Sprintf(`Invalid Body`))
+		return
+	}
+
 }
