@@ -52,16 +52,16 @@ func (bin *MysqlBin) ReadLog(no int) (req *Request, err error) {
 }
 
 // SetResponser sets a responser
-func (bin *MysqlBin) SetResponser(data Responser) {
+func (bin *MysqlBin) SetResponser(data Responser) (err error) {
 	mar, err := json.Marshal(data)
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
-	_, err = bin.manager.db.Exec("INSERT INTO `response` (bin,data) VALUES (?,?)", bin.id, mar)
+	_, err = bin.manager.db.Exec("INSERT INTO `responser` (bin,path,data) VALUES (?,?,?)", bin.id, data.Path, mar)
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
-	return
+	return nil
 }
 
 // GetResponser gets a responser
@@ -72,10 +72,16 @@ func (bin *MysqlBin) GetResponser(reqURL string) (responser *Responser, err erro
 	}
 	row := bin.manager.db.QueryRow("SELECT (data) FROM `responser` WHERE bin=? AND path = BINARY ?", bin.id, u.Path)
 	var res []byte
-	responser = &Responser{}
 	err = row.Scan(&res)
 	if err != nil {
 		return
+	}
+	responser = &Responser{
+		Path:       "",
+		Body:       nil,
+		Proto:      "HTTP/1.1",
+		Header:     nil,
+		StatusCode: 200,
 	}
 	err = json.Unmarshal(res, responser)
 	return

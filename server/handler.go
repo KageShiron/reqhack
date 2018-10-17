@@ -119,21 +119,28 @@ func ResponseHandler(w http.ResponseWriter, r *http.Request) {
 		restError(w, 404, fmt.Sprintf(`Bin "%s" not found`, id))
 		return
 	}
-	body, err := r.GetBody()
-	if err != nil {
-		restError(w, 400, fmt.Sprintf(`Invalid Body`))
-		return
-	}
-	res := &db.Responser{}
+	body := r.Body
 	b, err := ioutil.ReadAll(body)
 	if err != nil {
 		restError(w, 400, fmt.Sprintf(`Invalid Body`))
 		return
 	}
+	res := &db.Responser{
+		Path:       "",
+		Body:       nil,
+		Proto:      "",
+		Header:     nil,
+		StatusCode: 0,
+	}
 	err = json.Unmarshal(b, res)
-	if err == nil {
-		restError(w, 400, fmt.Sprintf(`Invalid Body`))
+	if err != nil {
+		restError(w, 400, fmt.Sprintf(err.Error()))
 		return
 	}
-
+	err = bin.SetResponser(*res)
+	if err != nil {
+		restError(w, 400, fmt.Sprintf(err.Error()))
+		return
+	}
+	restSucceed(w, 200, "Success")
 }

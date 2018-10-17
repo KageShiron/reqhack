@@ -11,11 +11,11 @@ import (
 
 // A Responser represents dummy response config
 type Responser struct {
-	Path       string      `json:"path"`
-	StatusCode int         `json:"status_code"`
-	Proto      string      `json:"proto"`
-	Header     http.Header `json:"header"`
-	Body       []byte      `json:"body"`
+	Path       string      `json:"path,omitempty"`
+	StatusCode int         `json:"status_code,omitempty"`
+	Proto      string      `json:"proto,omitempty"`
+	Header     http.Header `json:"header,omitempty"`
+	Body       []byte      `json:"body,omitempty"`
 }
 
 // A Request represents a log record of HTTP Request.
@@ -61,8 +61,8 @@ type Bin interface {
 	WriteLog(request *Request) (err error)
 	ReadLog(no int) (req *Request, err error)
 	ReadLogs(index int, length int) (requests []*Request, err error)
-	SetResponser(item Responser)
-	GetResponser(item Responser)
+	SetResponser(data Responser) (err error)
+	GetResponser(reqURL string) (responser *Responser, err error)
 	Length() int
 }
 

@@ -12,7 +12,7 @@ func main() {
 	router.HandleFunc("/v1/{id}/items", ItemsHandler).Methods("GET")
 	router.HandleFunc("/v1/{id}/items/{num:[0-9]*(?:\\/)?}", ItemsHandler).Methods("GET")
 	router.HandleFunc("/v1/{id}/{_:in(?:/.*|$)}", InHandler)
-	router.HandleFunc("/v1/{id}/responses", ResponsHandler).Methods("POST")
+	router.HandleFunc("/v1/{id}/responses", ResponseHandler).Methods("POST")
 	srv := &http.Server{
 		Addr:    "localhost:8081",
 		Handler: router, // Pass our instance of gorilla/router in.
