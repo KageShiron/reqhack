@@ -3,6 +3,7 @@ package infrastracture
 import (
 	_ "github.com/go-sql-driver/mysql" //mysql
 	"github.com/jmoiron/sqlx"
+	"os"
 )
 
 // SQLHandler is a connection handler
@@ -12,8 +13,12 @@ type SQLHandler struct {
 
 // NewSQLHandler returns mysql connection
 func NewSQLHandler() *SQLHandler {
-	conn, err := sqlx.Open("mysql", "root:mysql@tcp(192.168.99.100:3306)/reqhack")
+	src := os.Getenv("DATA_SOURCE_NAME")
+	conn, err := sqlx.Open("mysql", src)
 	if err != nil {
+		panic(err.Error())
+	}
+	if err = conn.Ping(); err != nil {
 		panic(err.Error())
 	}
 

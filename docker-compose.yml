@@ -1,0 +1,23 @@
+server:
+  build: ./server
+  ports:
+    - 8081:8081
+  volumes:
+    - ./server:/go/src/github.com/KageShiron/reqhack/server
+  links:
+    - database
+  environment:
+    - DB_NAME=reqhack
+    - DATA_SOURCE_NAME=root:mysql@tcp(database:3306)/reqhack
+  entrypoint: ["./wait-for-it.sh","database:3306","--","/go/bin/server"]
+
+database:
+  image: mysql
+  volumes:
+    - ./server/sql:/docker-entrypoint-initdb.d
+  environment:
+    - MYSQL_ROOT_PASSWORD=mysql
+    - MYSQL_USER=reqhacker
+    - MYSQL_PASSWORD=reqhacker
+  ports:
+    - "3306:3306"
