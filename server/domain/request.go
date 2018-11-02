@@ -1,4 +1,4 @@
-package db
+package domain
 
 import (
 	"bytes"
@@ -9,10 +9,10 @@ import (
 	"time"
 )
 
-var ()
-
 // A Request represents a log record of HTTP Request.
 type Request struct {
+	ID            int64           `json:"-"`
+	Bin           *Bin            `json:"-"`
 	Time          time.Time       `json:"time"`
 	Method        string          `json:"method"`
 	Proto         string          `json:"protocol"`
@@ -24,6 +24,12 @@ type Request struct {
 	MultipartForm *multipart.Form `json:"multipartform"`
 	RemoteAddr    string          `json:"remoteaddr"`
 	RequestURI    string          `json:"requesturi"`
+}
+
+// A Bin represents a bin object
+type Bin struct {
+	ID   int64
+	Name string
 }
 
 // NewRequest return a Request object
@@ -47,14 +53,6 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		RequestURI: r.RequestURI,
 	}
 	return req, err
-}
-
-// A Bin represents a requests bin box.
-type Bin interface {
-	WriteLog(request *Request) (err error)
-	ReadLog(no int) (req *Request, err error)
-	ReadLogs(index int, length int) (requests []*Request, err error)
-	Length() int
 }
 
 // A BinManager managements bins
