@@ -19,5 +19,3 @@ database:
     - MYSQL_ROOT_PASSWORD=mysql
     - MYSQL_USER=reqhacker
     - MYSQL_PASSWORD=reqhacker
-  ports:
-    - "3306:3306"
