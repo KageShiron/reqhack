@@ -26,10 +26,12 @@ services:
     image: nginx:latest
     ports:
       - 80:80
+      - 443:443
     environment:
       - REQHACK_BASEHOST
     links:
       - reqhack-server
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf.template
+      - /etc/nginx/ssl/:/etc/nginx/ssl/
     command: /bin/bash -c "export REQHACK_BASEHOST_ESC=$$(echo $REQHACK_BASEHOST | sed '-e s/\./\\\\./g') && echo $$REQHACK_BASEHOST && echo $$REQHACK_BASEHOST_ESC && envsubst '$$REQHACK_BASEHOST,$$REQHACK_BASEHOST_ESC' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && cat /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
