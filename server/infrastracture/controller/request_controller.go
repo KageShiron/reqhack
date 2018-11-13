@@ -90,6 +90,8 @@ func (rc *RequestController) In(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rc.Request.Add(req)
+	if str, err := json.Marshal(req); err == nil {
+		utils.RestSucceed(w, 200, string(str))
+	}
 
-	utils.RestSucceed(w, 200, r.RemoteAddr)
 }

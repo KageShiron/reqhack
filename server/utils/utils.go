@@ -23,3 +23,9 @@ func RestSucceed(w http.ResponseWriter, code int, message string) error {
 	e := simpleResponse{Message: message, Code: code}
 	return ren.JSON(w, code, map[string]simpleResponse{"success": e})
 }
+
+// RestSucceedObject returns success json with a result object
+func RestSucceedObject(w http.ResponseWriter, code int, obj interface{}) error {
+	e := map[string]interface{}{"result": obj, "code": code}
+	return ren.JSON(w, code, map[string]interface{}{"success": e})
+}
