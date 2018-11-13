@@ -21,6 +21,7 @@ services:
       - MYSQL_ROOT_PASSWORD=mysql
       - MYSQL_USER=reqhacker
       - MYSQL_PASSWORD=reqhacker
+      - REQHACK_RANDOM
 
   nginx:
     image: nginx:latest
@@ -29,6 +30,7 @@ services:
       - 443:443
     environment:
       - REQHACK_BASEHOST
+      - REQHACK_RANDOM
     links:
       - reqhack-server
     volumes:

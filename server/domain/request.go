@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -31,6 +32,7 @@ type Bin struct {
 	ID   int64
 	Name string
 }
+var realIPrand = "X-Reqhack-Real-IP-" + os.Getenv("REQHACK_RANDOM")
 
 // NewRequest return a Request object
 func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
@@ -39,6 +41,10 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	r.Body = ioutil.NopCloser(bytes.NewReader(body))
 	r.ParseForm()
 	//m, err := r.MultipartReader()
+	if ip := r.Header.Get(realIPrand) ; ip != "" {
+		r.Header.Del(realIPrand)
+		r.RemoteAddr = ip
+	}
 
 	req = &Request{
 		Time:       time,

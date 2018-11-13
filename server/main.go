@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+
 func main() {
 	router := mux.NewRouter().StrictSlash(false)
 
