@@ -42,10 +42,13 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	r.Body = ioutil.NopCloser(bytes.NewReader(body))
 	r.ParseForm()
 	//m, err := r.MultipartReader()
-	if ip := r.Header.Get(realIPrand); ip != "" {
+	println(realIPrand)
+	println(r.Header.Get(realIPrand))
+	ip := r.Header.Get(realIPrand)
+	if ip != "" {
 		r.Header.Del(realIPrand)
 	} else {
-		ip = r.RequestAddr
+		ip = r.RemoteAddr
 	}
 
 	req = &Request{
@@ -57,7 +60,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		Host:       r.Host,
 		Form:       r.Form,
 		PostForm:   r.PostForm,
-		RemoteAddr: r.RemoteAddr,
+		RemoteAddr: ip,
 		RequestURI: r.RequestURI,
 	}
 	return req, err
