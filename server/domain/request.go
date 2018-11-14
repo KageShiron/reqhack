@@ -3,10 +3,12 @@ package domain
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -34,6 +36,7 @@ type Bin struct {
 }
 
 var realIPrand = "X-Reqhack-Real-IP-" + os.Getenv("REQHACK_RANDOM")
+var baseHost = os.Getenv("REQHACK_BASEHOST")
 
 // NewRequest return a Request object
 func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
@@ -51,6 +54,12 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		ip = r.RemoteAddr
 	}
 
+	pos := strings.LastIndex(r.Host,baseHost)
+	prefix := "/v1/" + r.Host[:(pos-1)] + "/in/"
+	if !strings.HasPrefix(r.RequestURI,prefix){
+		log.Fatal("Bad Prefix : " + r.RequestURI)
+	}
+
 	req = &Request{
 		Time:       time,
 		Method:     r.Method,
@@ -61,7 +70,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		Form:       r.Form,
 		PostForm:   r.PostForm,
 		RemoteAddr: ip,
-		RequestURI: r.RequestURI,
+		RequestURI: strings.TrimPrefix(r.RequestURI,prefix),
 	}
 	return req, err
 }
