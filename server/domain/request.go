@@ -3,9 +3,12 @@ package domain
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -32,6 +35,9 @@ type Bin struct {
 	Name string
 }
 
+var realIPrand = "X-Reqhack-Real-IP-" + os.Getenv("REQHACK_RANDOM")
+var baseHost = os.Getenv("REQHACK_BASEHOST")
+
 // NewRequest return a Request object
 func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	body, err := ioutil.ReadAll(r.Body)
@@ -39,6 +45,20 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	r.Body = ioutil.NopCloser(bytes.NewReader(body))
 	r.ParseForm()
 	//m, err := r.MultipartReader()
+	println(realIPrand)
+	println(r.Header.Get(realIPrand))
+	ip := r.Header.Get(realIPrand)
+	if ip != "" {
+		r.Header.Del(realIPrand)
+	} else {
+		ip = r.RemoteAddr
+	}
+
+	pos := strings.LastIndex(r.Host,baseHost)
+	prefix := "/v1/" + r.Host[:(pos-1)] + "/in"
+	if !strings.HasPrefix(r.RequestURI,prefix){
+		log.Fatal("Bad Prefix : " + r.RequestURI)
+	}
 
 	req = &Request{
 		Time:       time,
@@ -49,8 +69,8 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		Host:       r.Host,
 		Form:       r.Form,
 		PostForm:   r.PostForm,
-		RemoteAddr: r.RemoteAddr,
-		RequestURI: r.RequestURI,
+		RemoteAddr: ip,
+		RequestURI: strings.TrimPrefix(r.RequestURI,prefix),
 	}
 	return req, err
 }

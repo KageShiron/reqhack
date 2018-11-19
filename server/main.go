@@ -21,7 +21,7 @@ func main() {
 	router.Methods("GET").Path("/v1/{name}/items/{num:[0-9]*(?:\\/)?}").HandlerFunc(rc.Items)
 	router.Path("/v1/{name}/{_:in(?:/.*|$)}").HandlerFunc(rc.In)
 	srv := &http.Server{
-		Addr:    "localhost:8081",
+		Addr:    ":8081",
 		Handler: router, // Pass our instance of gorilla/router in.
 	}
 

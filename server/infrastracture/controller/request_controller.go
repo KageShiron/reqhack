@@ -90,6 +90,5 @@ func (rc *RequestController) In(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rc.Request.Add(req)
-
-	utils.RestSucceed(w, 200, r.RemoteAddr)
+	utils.RestSucceedObject(w, 200, req)
 }
