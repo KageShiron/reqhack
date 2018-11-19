@@ -55,7 +55,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	}
 
 	pos := strings.LastIndex(r.Host,baseHost)
-	prefix := "/v1/" + r.Host[:(pos-1)] + "/in/"
+	prefix := "/v1/" + r.Host[:(pos-1)] + "/in"
 	if !strings.HasPrefix(r.RequestURI,prefix){
 		log.Fatal("Bad Prefix : " + r.RequestURI)
 	}
