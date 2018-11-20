@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Kanit');
+
 .App {
   text-align: center;
 }
@@ -25,4 +27,10 @@
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.kanit span {
+  font-family: kanit;
+  vertical-align: middle;
+  font-size:2em;
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Input, Menu } from "semantic-ui-react";
+import { Button, Icon, Input, Menu, Popup } from "semantic-ui-react";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container/Container";
 import "./App.css";
 
@@ -21,12 +21,16 @@ class App extends React.Component {
             <Menu.Item position="right">Login</Menu.Item>
           </Container>
         </Menu>
-        <div>
-          https://<Input icon={{ name: 'redo', circular: true, link: true }} placeholder='bin name' />.reqhack00.esora.xyz
-        </div>
-        <div>
-          <Button> Create New Bin</Button>
-        </div>
+        <Container />
+        <br />
+        <Container>
+          <div>
+            <Button primary={true} size="massive">
+              {" "}
+              Create New Bin
+            </Button>
+          </div>
+        </Container>
       </div>
     );
   }
