@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Button, Icon, Input, Menu, Popup } from "semantic-ui-react";
+import { Button, Menu } from "semantic-ui-react";
 import Container from "semantic-ui-react/dist/commonjs/elements/Container/Container";
 import "./App.css";
+import BinNameForm from "./features/home/Components/binNameForm";
 
 class App extends React.Component {
   public render() {
@@ -21,7 +22,9 @@ class App extends React.Component {
             <Menu.Item position="right">Login</Menu.Item>
           </Container>
         </Menu>
-        <Container />
+        <Container>
+          <BinNameForm />
+        </Container>
         <br />
         <Container>
           <div>

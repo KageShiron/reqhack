@@ -1,7 +1,7 @@
 import { routerReducer } from "react-router-redux";
 import { combineReducers } from "redux";
 import { StateType } from "typesafe-actions";
-import { reqhackReducer } from "../features/reqhack";
+import { reqhackReducer } from "../features/home";
 
 const rootReducer = combineReducers({
   reqhack: reqhackReducer,
