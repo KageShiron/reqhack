@@ -31,6 +31,6 @@
 
 .kanit span {
   font-family: kanit;
-  vertical-align: middle;
+  vertical-align: text-bottom;
   font-size:2em;
 }

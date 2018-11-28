@@ -35,6 +35,10 @@ class BinNameForm extends React.Component<{}, IState> {
     )
   }
 
+  public componentDidMount = (): void => {
+    this.setState({name:BinNameForm.randomName()});
+  };
+
   private handleChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({name:e.target.value});
   };

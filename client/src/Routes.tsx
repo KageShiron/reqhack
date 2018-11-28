@@ -1,10 +1,11 @@
 import * as React from "react";
-import { Button, Menu } from "semantic-ui-react";
-import Container from "semantic-ui-react/dist/commonjs/elements/Container/Container";
+import { Switch } from "react-router";
+import { Route } from "react-router-dom";
+import { Container, Menu } from "semantic-ui-react";
 import "./App.css";
-import BinNameForm from "./features/home/Components/binNameForm";
+import Home from "./features/home/Components/home";
 
-class App extends React.Component {
+export class Routes extends React.Component<{}, {}> {
   public render() {
     return (
       <div className="App">
@@ -22,21 +23,10 @@ class App extends React.Component {
             <Menu.Item position="right">Login</Menu.Item>
           </Container>
         </Menu>
-        <Container>
-          <BinNameForm />
-        </Container>
-        <br />
-        <Container>
-          <div>
-            <Button primary={true} size="massive">
-              {" "}
-              Create New Bin
-            </Button>
-          </div>
-        </Container>
+        <Switch>
+          <Route path="/" component={Home} />
+        </Switch>
       </div>
     );
   }
 }
-
-export default App;
