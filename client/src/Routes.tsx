@@ -1,8 +1,9 @@
 import * as React from "react";
 import { Switch } from "react-router";
 import { Route } from "react-router-dom";
-import { Container, Menu } from "semantic-ui-react";
+import { Menu } from "semantic-ui-react";
 import "./App.css";
+import Bin from "./features/bin/Components/bin";
 import Home from "./features/home/Components/home";
 
 export class Routes extends React.Component<{}, {}> {
@@ -10,21 +11,14 @@ export class Routes extends React.Component<{}, {}> {
     return (
       <div className="App">
         <Menu size="large">
-          <Container>
-            <Menu.Item as="span" active={true}>
-              reqhack
-            </Menu.Item>
-            <Menu.Item as="a" active={true}>
-              Home
-            </Menu.Item>
-            <Menu.Item as="a">Work</Menu.Item>
-            <Menu.Item as="a">Company</Menu.Item>
-            <Menu.Item as="a">Careers</Menu.Item>
-            <Menu.Item position="right">Login</Menu.Item>
-          </Container>
+          <Menu.Item as="a" active={true} href="/" id="logo">
+            reqhack
+          </Menu.Item>
+          <Menu.Item position="right">Login</Menu.Item>
         </Menu>
         <Switch>
-          <Route path="/" component={Home} />
+          <Route exact={true} path="/" component={Home} />
+          <Route path="/bin/:name" component={Bin} />
         </Switch>
       </div>
     );

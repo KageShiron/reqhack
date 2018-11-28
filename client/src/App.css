@@ -34,3 +34,10 @@
   vertical-align: text-bottom;
   font-size:2em;
 }
+
+#logo{
+  font-family: kanit;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding:0 0.5em;
+}

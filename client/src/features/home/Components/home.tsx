@@ -19,6 +19,6 @@ export default class Home extends React.Component<{}, {}> {
   }
 
   public handlePost = () => {
-    alert("");
+    //    fetch("/")
   };
 }
