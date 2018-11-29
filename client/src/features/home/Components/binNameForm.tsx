@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import {Icon, Input, Popup} from "semantic-ui-react";
-import {RootState} from "../../../store";
 
 interface IState{
   name: string;
 }
 
-class BinNameForm extends React.Component<{}, IState> {
+export default class BinNameForm extends React.Component<{}, IState> {
 
   private static randomName() {
     const list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -47,5 +45,3 @@ class BinNameForm extends React.Component<{}, IState> {
     this.setState({name:BinNameForm.randomName()});
   };
 }
-const mapStateToProps = (state:RootState) => ({});
-export default connect(mapStateToProps,{})(BinNameForm);
