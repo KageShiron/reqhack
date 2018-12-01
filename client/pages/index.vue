@@ -1,5 +1,32 @@
 <template>
-  <h1>reqhack</h1>
+  <section class="section">
+    <div class="field is-horizontal binurl">
+      <span>https://</span>
+      <div class="control has-icons-right">
+        <input 
+          v-model="binname"
+          class="input"
+          type="text"
+        >
+      </div>
+      <span>.reqhack00.esora.xyz</span>
+
+    </div>
+    <div class="field">
+      <button 
+        class="button is-primary is-right" 
+        @click="$store.dispatch('createBin', binname)">CreateBin</button>
+    </div>
+
+    <div v-if="created !=='' && created==='error'">
+      ERROR!
+    </div>
+
+    <div v-if="created!=='' && created !== 'error'">
+      Logger :<a :href="`https://${created}.esora.xyz`">https://{created}.esora.xyz</a><br>
+      Inspect: <a :href="`/bin/${created}`">{{ location.host + `/bin/${created}` }}</a><br>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -8,6 +35,19 @@ import Logo from '~/components/Logo.vue'
 export default {
   components: {
     Logo
+  },
+  computed: {
+    binname: {
+      get() {
+        return this.$store.state.binname
+      },
+      set(value) {
+        this.$store.commit('updateBinName', value)
+      }
+    },
+    created() {
+      return this.$store.state.created
+    }
   }
 }
 </script>
@@ -41,5 +81,15 @@ export default {
 
 .links {
   padding-top: 15px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.binurl {
+  display: flex;
+  align-items: center;
 }
 </style>

@@ -3,11 +3,15 @@
     <nav class="navbar is-dark">
       <div class="container">
         <div class="navbar-brand">
-          <a 
-            class="navbar-item brand-text" 
-            href="/">
-            reqhack
-          </a>
+          <div class="navbar-item logo">
+            <a
+              class="navbar-item brand-text"
+              href="/">
+              <img 
+                src="/logo.svg"
+                width="120">
+            </a>
+          </div>
           <div 
             class="navbar-burger burger" 
             data-target="navMenu">
@@ -96,5 +100,9 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+
+.navbar-item.logo {
+  background-color: white;
 }
 </style>

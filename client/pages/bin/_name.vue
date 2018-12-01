@@ -9,29 +9,24 @@
           v-for="(item,key) in items"
           :key="key"
           class="card"
-        >      <header class="card-header">
-          <p class="card-header-title">
-            {{ item.method }} {{ item.requesturi }}
-          </p>
-          <a 
-            href="#" 
-            class="card-header-icon" 
-            aria-label="more options">
-            <span class="icon">
-              <i 
-                class="fas fa-angle-down" 
-                aria-hidden="true"/>
-            </span>
-          </a>
-        </header>
+        >
+          <header class="card-header">
+            <p class="card-header-title">
+              <span class="http-method">{{ item.method }}</span>
+              <span>{{ item.requesturi }}</span>
+            </p>
+            <p class="card-header-title">
+              <span>{{ item.remoteaddr }}</span>
+            </p>
+          </header>
           <div class="card-content">
             <div class="content">
               {{ new Date(item.time).toISOString() }}
-              <ul>
-                <li
+              <table>
+                <tr
                   v-for="(v,k) in item.header"
-                  :key="k">{{ k }}:{{ v }}</li>
-              </ul>
+                  :key="k"><th>{{ k }}</th><td>{{ v }}</td></tr>
+              </table>
             </div>
           </div>
     </div></div></div>
@@ -53,5 +48,14 @@ export default {
 <style>
 .card {
   margin: 1em;
+}
+
+.http-method {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 3px 5px;
+}
+h1 {
+  padding: 1em;
 }
 </style>
