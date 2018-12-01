@@ -18,13 +18,8 @@
         @click="$store.dispatch('createBin', binname)">CreateBin</button>
     </div>
 
-    <div v-if="created !=='' && created==='error'">
-      ERROR!
-    </div>
-
-    <div v-if="created!=='' && created !== 'error'">
-      Logger :<a :href="`https://${created}.esora.xyz`">https://{created}.esora.xyz</a><br>
-      Inspect: <a :href="`/bin/${created}`">{{ location.host + `/bin/${created}` }}</a><br>
+    <div v-if="created">
+      {{ error }}
     </div>
   </section>
 </template>
@@ -44,6 +39,12 @@ export default {
       set(value) {
         this.$store.commit('updateBinName', value)
       }
+    },
+    host() {
+      return location.host
+    },
+    protocol() {
+      return location.protocol
     },
     created() {
       return this.$store.state.created

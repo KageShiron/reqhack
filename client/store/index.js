@@ -4,15 +4,15 @@ export const state = () => ({
   binname: Math.random()
     .toString(36)
     .slice(-8),
-  created: ''
+  error: ''
 })
 
 export const mutations = {
   updateBinName(state, value) {
     state.binname = value
   },
-  updateCreated(state, value) {
-    state.created = value
+  updateError(state, value) {
+    state.error = value
   }
 }
 
@@ -20,9 +20,9 @@ export const actions = {
   async createBin(context, name) {
     const { data } = await axios.post(`/v1/${name}/create`)
     if (data.success) {
-      context.commit('updateCreated', name)
+      this.$router.push({ path: `/bin/${name}/` })
     } else {
-      context.commit('updateCreated', 'error')
+      context.commit('updateError', data)
     }
   }
 }

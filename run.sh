@@ -1,5 +1,3 @@
-cd client
-yarn build
-cd ..
+#! /bin/sh
 export REQHACK_RANDOM=$(od -vAn -tx8 -N8 < /dev/random | tr -d " ");
 docker-compose up
