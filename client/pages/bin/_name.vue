@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1>Inspect {{ $route.params.name }}</h1>
+    <h1 class="title">Inspect {{ $route.params.name }}</h1>
+    <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
 
 
     <div class="columns">
@@ -41,6 +42,15 @@ export default {
   computed: {
     items() {
       return this.$store.state.bin.items[this.$route.params.name]
+    },
+    host() {
+      return location.host
+    },
+    protocol() {
+      return location.protocol
+    },
+    created() {
+      return this.$store.state.created
     }
   }
 }

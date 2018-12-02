@@ -39,7 +39,7 @@ console.log(`upstream reqhack {
   }
 
   server {
-      server_name ~^(?<subdomain>.*?)\\.${host.replace(/\\./, '\\\\.')};
+      server_name ~^(?<subdomain>.*?)\.${host.replace(/\./, '\\.')};
       listen 80;
       ${
         usessl

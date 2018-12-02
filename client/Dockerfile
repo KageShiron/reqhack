@@ -5,7 +5,7 @@ ARG REQHACK_BASEHOST
 ARG REQHACK_RANDOM
 ARG REQHACK_USE_SSL
 RUN node /tmp/client/make_nginx_config.js > /tmp/client/default.conf
-# > /tmp/client/default.conf
+RUN yarn --production  --offline
 RUN yarn build
 
 FROM nginx:1.15-alpine as nginx
