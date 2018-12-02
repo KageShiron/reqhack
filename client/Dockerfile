@@ -4,9 +4,9 @@ WORKDIR /tmp/client
 ARG REQHACK_BASEHOST
 ARG REQHACK_RANDOM
 ARG REQHACK_USE_SSL
-RUN node /tmp/client/make_nginx_config.js > /tmp/client/default.conf
-RUN yarn --production  --offline
+RUN yarn --production
 RUN yarn build
+RUN node /tmp/client/make_nginx_config.js > /tmp/client/default.conf
 
 FROM nginx:1.15-alpine as nginx
 WORKDIR /var/www/app

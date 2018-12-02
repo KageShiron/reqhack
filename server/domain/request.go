@@ -45,19 +45,17 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	r.Body = ioutil.NopCloser(bytes.NewReader(body))
 	r.ParseForm()
 	//m, err := r.MultipartReader()
-	println(realIPrand)
-	println(r.Header.Get(realIPrand))
 	ip := r.Header.Get(realIPrand)
+	prefix := ""
 	if ip != "" {
 		r.Header.Del(realIPrand)
+		pos := strings.LastIndex(r.Host, baseHost)
+		prefix = "/v1/" + r.Host[:(pos-1)] + "/in"
+		if !strings.HasPrefix(r.RequestURI, prefix) {
+			log.Fatal("Bad Prefix : " + r.RequestURI)
+		}
 	} else {
 		ip = r.RemoteAddr
-	}
-
-	pos := strings.LastIndex(r.Host,baseHost)
-	prefix := "/v1/" + r.Host[:(pos-1)] + "/in"
-	if !strings.HasPrefix(r.RequestURI,prefix){
-		log.Fatal("Bad Prefix : " + r.RequestURI)
 	}
 
 	req = &Request{
@@ -70,7 +68,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		Form:       r.Form,
 		PostForm:   r.PostForm,
 		RemoteAddr: ip,
-		RequestURI: strings.TrimPrefix(r.RequestURI,prefix),
+		RequestURI: strings.TrimPrefix(r.RequestURI, prefix),
 	}
 	return req, err
 }

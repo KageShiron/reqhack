@@ -1,13 +1,13 @@
 #! /bin/sh
-source .env
+export $(cat .env | xargs)
 if [ -z "$REQHACK_BASEHOST" ]; then
     echo "REQHACK_BASEHOST is empty. use localhost."
     export REQHACK_BASEHOST="localhost"
 fi
 
-if [ ! -z "$(grep REQHACK_RANDOM= .env)" ]; then
+if [ -z "$(grep REQHACK_RANDOM= .env)" ]; then
     echo ".env file has no REQHACK_RANDOM."
-    echo REQHACK_RANDOM=$(od -vAn -tx8 -N8 < /dev/random | tr -d " "); >> .env
+    echo REQHACK_RANDOM=$(od -vAn -tx8 -N8 < /dev/random | tr -d " ") >> .env
 fi
 
 if [ "$1" == "build" ]; then

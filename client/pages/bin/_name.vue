@@ -64,6 +64,7 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 3px 5px;
+  margin-right:1em;
 }
 h1 {
   padding: 1em;
