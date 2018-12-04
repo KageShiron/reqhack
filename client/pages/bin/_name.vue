@@ -11,6 +11,41 @@
           :key="key"
           class="card"
         >
+          <header>
+            <span class="method">{{ item.method }}</span>
+            <span>{{ item.host }}{{ item.requesturi }}</span>
+            <time :datetime="new Date(item.time).toISOString()">{{ item.time }}</time>
+          </header>
+          <div class="content">
+            <div class="field has-addons">
+              <p class="control">
+                <a class="button">
+                  <span>Table</span>
+                </a>
+              </p>
+              <p class="control">
+                <a class="button">
+                  <span>Raw</span>
+                </a>
+              </p>
+              <p class="control">
+                <a class="button">
+                  <span>Json</span>
+                </a>
+              </p>
+            </div>
+            <table>
+              <h2>Http Headers</h2>
+              <tr
+                v-for="(v,k) in item.header"
+                :key="k"><th>{{ k }}</th><td>{{ v.join("\n") }}</td></tr>
+            </table>
+            <div>
+              <input type="text" >
+              <button/>
+            </div>
+          </div>
+          <!--
           <header class="card-header">
             <p class="card-header-title">
               <span class="http-method">{{ item.method }}</span>
@@ -29,7 +64,7 @@
                   :key="k"><th>{{ k }}</th><td>{{ v }}</td></tr>
               </table>
             </div>
-          </div>
+          </div>-->
     </div></div></div>
   </div>
 </template>
@@ -55,16 +90,23 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .card {
   margin: 1em;
+  header {
+    padding: 0.5em;
+    border-bottom: 1px solid #ccc;
+  }
+  .content {
+    padding: 0.5em;
+  }
 }
 
 .http-method {
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 3px 5px;
-  margin-right:1em;
+  margin-right: 1em;
 }
 h1 {
   padding: 1em;

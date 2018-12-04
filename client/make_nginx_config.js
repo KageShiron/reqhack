@@ -55,6 +55,8 @@ console.log(`upstream reqhack {
       location / {
           rewrite /(.*) /v1/$subdomain/in/$1 break;
           proxy_set_header X-Reqhack-Real-IP-${random} $remote_addr;
+          proxy_set_header X-Reqhack-Real-Port-${random} $remote_user;
+          proxy_set_header X-Reqhack-Real-Header-${random} $request;
           proxy_set_header Host $http_host;
           proxy_pass http://reqhack;
       }
