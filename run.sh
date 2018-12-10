@@ -10,7 +10,7 @@ if [ -z "$(grep REQHACK_RANDOM= .env)" ]; then
     echo REQHACK_RANDOM=$(od -vAn -tx8 -N8 < /dev/random | tr -d " ") >> .env
 fi
 
-if [ "$1" == "build" ]; then
+if [ "$1" == "build" ] ; then
     docker-compose up --build
 elif [ "$1" == "client" ] ; then
     docker-compose up --no-deps --build client

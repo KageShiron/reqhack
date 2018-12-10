@@ -12,9 +12,17 @@
           class="card"
         >
           <header>
-            <span class="method">{{ item.method }}</span>
+            <span class="http-method">{{ item.method }}</span>
             <span>{{ item.host }}{{ item.requesturi }}</span>
-            <time :datetime="new Date(item.time).toISOString()">{{ item.time }}</time>
+            <span class="from-ip-title">From:</span>
+            <div class="from-ip">{{ item.remoteaddr }}
+              <a
+                :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                class="button"><img src="https://censys.io/favicon.ico"></a>
+              <a
+                :href="'https://www.shodan.io/search?query='+item.remoteaddr"
+                class="button"><img src="https://static.shodan.io/shodan/img/favicon.png"></a></div>
+            <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }} <br> {{ $moment(item.time).fromNow() }}</time>
           </header>
           <div class="content">
             <div class="field has-addons">
@@ -70,6 +78,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   async fetch({ store, params }) {
     await store.dispatch('bin/fetch_bin', params.name)
@@ -96,18 +105,37 @@ export default {
   header {
     padding: 0.5em;
     border-bottom: 1px solid #ccc;
+    display: grid;
+    grid-template-columns: min-content max-content auto;
+    grid-template-rows: 1fr 1fr;
+    & > :last-child {
+      margin-left: auto;
+    }
+    .http-method {
+      background-color: #666;
+      color: white;
+      border-radius: 3px;
+      padding: 2px 5px;
+      margin-right: 0.5em;
+    }
+    time {
+      grid-column: 3;
+      grid-row: 1/2;
+    }
+    .from-ip .button {
+      padding: 0.3em;
+      line-height: 1em;
+      height: auto;
+      img {
+        height: 1em;
+      }
+    }
   }
   .content {
     padding: 0.5em;
   }
 }
 
-.http-method {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 3px 5px;
-  margin-right: 1em;
-}
 h1 {
   padding: 1em;
 }
