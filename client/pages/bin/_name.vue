@@ -22,12 +22,14 @@
                   <p class="control">
                     <a
                       :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                      target="_blank"
                       data-tooltip="Copy remote IP address"
                       class="button tooltip"><i class="fa fa-clipboard" /></a>
                   </p>
                   <p class="control">
                     <a
                       :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                      target="_blank"
                       data-tooltip="View Censys"
                       class="button tooltip"><img src="https://censys.io/favicon.ico"></a>
                   </p>
