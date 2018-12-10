@@ -15,13 +15,31 @@
             <span class="http-method">{{ item.method }}</span>
             <span>{{ item.host }}{{ item.requesturi }}</span>
             <span class="from-ip-title">From:</span>
-            <div class="from-ip">{{ item.remoteaddr }}
-              <a
-                :href="'https://censys.io/ipv4/'+item.remoteaddr"
-                class="button"><img src="https://censys.io/favicon.ico"></a>
-              <a
-                :href="'https://www.shodan.io/search?query='+item.remoteaddr"
-                class="button"><img src="https://static.shodan.io/shodan/img/favicon.png"></a></div>
+            <div class="from-ip">
+              {{ item.remoteaddr }}
+              <div class="ip-actions">
+                <div class="field has-addons">
+                  <p class="control">
+                    <a
+                      :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                      data-tooltip="Copy remote IP address"
+                      class="button tooltip"><i class="fa fa-clipboard" /></a>
+                  </p>
+                  <p class="control">
+                    <a
+                      :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                      data-tooltip="View Censys"
+                      class="button tooltip"><img src="https://censys.io/favicon.ico"></a>
+                  </p>
+                  <p class="control">
+                    <a
+                      :href="'https://www.shodan.io/search?query='+item.remoteaddr"
+                      data-tooltip="View Shodan"
+                      class="button tooltip"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
+                </p></div>
+              </div>
+
+            </div>
             <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }} <br> {{ $moment(item.time).fromNow() }}</time>
           </header>
           <div class="content">
@@ -120,7 +138,7 @@ export default {
     }
     time {
       grid-column: 3;
-      grid-row: 1/2;
+      grid-row: 1/3;
     }
     .from-ip .button {
       padding: 0.3em;
@@ -129,6 +147,9 @@ export default {
       img {
         height: 1em;
       }
+    }
+    .ip-actions {
+      display: inline-block;
     }
   }
   .content {
