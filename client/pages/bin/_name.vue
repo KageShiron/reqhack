@@ -1,101 +1,93 @@
-<template>
+<template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
   <div>
-    <h1 class="title">Inspect {{ $route.params.name }}</h1>
-    <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">Inspect {{ $route.params.name }}</h1>
+          <h2 class="subtitle">
+            Logger URL: <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
+          </h2>
+        </div>
+      </div>
+    </section>
 
-
-    <div class="columns">
-      <div class="column">
-        <div
-          v-for="(item,key) in items"
-          :key="key"
-          class="card"
-        >
-          <header>
-            <span class="http-method">{{ item.method }}</span>
-            <span>{{ item.host }}{{ item.requesturi }}</span>
-            <span class="from-ip-title">From:</span>
-            <div class="from-ip">
-              {{ item.remoteaddr }}
-              <div class="ip-actions">
-                <div class="field has-addons">
-                  <p class="control">
-                    <a
-                      :href="'https://censys.io/ipv4/'+item.remoteaddr"
-                      target="_blank"
-                      data-tooltip="Copy remote IP address"
-                      class="button tooltip"><i class="fa fa-clipboard" /></a>
-                  </p>
-                  <p class="control">
-                    <a
-                      :href="'https://censys.io/ipv4/'+item.remoteaddr"
-                      target="_blank"
-                      data-tooltip="View Censys"
-                      class="button tooltip"><img src="https://censys.io/favicon.ico"></a>
-                  </p>
-                  <p class="control">
-                    <a
-                      :href="'https://www.shodan.io/search?query='+item.remoteaddr"
-                      data-tooltip="View Shodan"
-                      class="button tooltip"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
-                </p></div>
-              </div>
-
-            </div>
-            <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }} <br> {{ $moment(item.time).fromNow() }}</time>
-          </header>
-          <div class="content">
-            <div class="field has-addons">
-              <p class="control">
-                <a class="button">
-                  <span>Table</span>
-                </a>
-              </p>
-              <p class="control">
-                <a class="button">
-                  <span>Raw</span>
-                </a>
-              </p>
-              <p class="control">
-                <a class="button">
-                  <span>Json</span>
-                </a>
-              </p>
-            </div>
-            <table>
-              <h2>Http Headers</h2>
-              <tr
-                v-for="(v,k) in item.header"
-                :key="k"><th>{{ k }}</th><td>{{ v.join("\n") }}</td></tr>
-            </table>
-            <div>
-              <input type="text" >
-              <button/>
-            </div>
-          </div>
-          <!--
-          <header class="card-header">
-            <p class="card-header-title">
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <div
+            v-for="(item,key) in items"
+            :key="key"
+            class="card"
+          >
+            <header>
               <span class="http-method">{{ item.method }}</span>
-              <span>{{ item.requesturi }}</span>
-            </p>
-            <p class="card-header-title">
-              <span>{{ item.remoteaddr }}</span>
-            </p>
-          </header>
-          <div class="card-content">
+              <span>{{ item.host }}{{ item.requesturi }}</span>
+              <span class="from-ip-title">From:</span>
+              <div class="from-ip">
+                <span>
+                  {{ item.remoteaddr }}
+                </span>
+                <div class="ip-actions">
+                  <div class="field has-addons">
+                    <p class="control">
+                      <a
+                        v-clipboard:copy="item.remoteaddr"
+                        v-clipboard:success="onCopySuccess"
+                        v-clipboard:error="onCopyError"
+                        target="_blank"
+                        data-tooltip="Copy remote IP address"
+                        class="button tooltip"><i class="fa fa-clipboard" /></a>
+                    </p>
+                    <p class="control">
+                      <a
+                        :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                        target="_blank"
+                        data-tooltip="View Censys"
+                        class="button tooltip"><img src="https://censys.io/favicon.ico"></a>
+                    </p>
+                    <p class="control">
+                      <a
+                        :href="'https://www.shodan.io/search?query='+item.remoteaddr"
+                        data-tooltip="View Shodan"
+                        class="button tooltip"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
+                  </p></div>
+                </div>
+
+              </div>
+              <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }} <br> {{ $moment(item.time).fromNow() }}</time>
+            </header>
             <div class="content">
-              {{ new Date(item.time).toISOString() }}
+              <div class="field has-addons">
+                <p class="control">
+                  <a class="button">
+                    <span>Table</span>
+                  </a>
+                </p>
+                <p class="control">
+                  <a class="button">
+                    <span>Raw</span>
+                  </a>
+                </p>
+                <p class="control">
+                  <a class="button">
+                    <span>Json</span>
+                  </a>
+                </p>
+              </div>
               <table>
+                <h2>Http Headers</h2>
                 <tr
                   v-for="(v,k) in item.header"
-                  :key="k"><th>{{ k }}</th><td>{{ v }}</td></tr>
+                  :key="k"><th>{{ k }}</th><td>{{ v.join("\n") }}</td></tr>
               </table>
+              <div>
+                <input type="text" >
+                <button/>
+              </div>
             </div>
-          </div>-->
-    </div></div></div>
-  </div>
-</template>
+      </div></div></div>
+    </div>
+</div></template>
 
 <script>
 import moment from 'moment'
@@ -116,12 +108,24 @@ export default {
     created() {
       return this.$store.state.created
     }
+  },
+  methods: {
+    onCopySuccess(e) {
+      this.$toast.success('Copied ' + e.text, {
+        duration: 3000,
+        iconPack: 'fontawesome',
+        icon: 'clipboard'
+      })
+    },
+    onCopyError(e) {
+      this.$toast.error('Copied Failed...', { duration: 3000 })
+    }
   }
 }
 </script>
 <style lang="scss">
 .card {
-  margin: 1em;
+  margin-bottom: 1em;
   header {
     padding: 0.5em;
     border-bottom: 1px solid #ccc;
@@ -158,8 +162,11 @@ export default {
     padding: 0.5em;
   }
 }
-
-h1 {
-  padding: 1em;
+.hero-body {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+.hero-subtitle {
+  font-size: 1rem;
 }
 </style>

@@ -2,7 +2,6 @@ const pkg = require('./package')
 
 module.exports = {
   mode: 'spa',
-
   /*
   ** Headers of the page
   */
@@ -39,7 +38,9 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/bulma',
     '@nuxtjs/moment',
-    '@nuxtjs/font-awesome'
+    '@nuxtjs/font-awesome',
+    'nuxt-clipboard2',
+    '@nuxtjs/toast'
   ],
   /*
   ** Axios module configuration
