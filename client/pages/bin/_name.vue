@@ -57,35 +57,31 @@
               <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }} <br> {{ $moment(item.time).fromNow() }}</time>
             </header>
             <div class="content">
-              <div class="field has-addons">
-                <p class="control">
-                  <a class="button">
-                    <span>Table</span>
-                  </a>
-                </p>
-                <p class="control">
-                  <a class="button">
-                    <span>Raw</span>
-                  </a>
-                </p>
-                <p class="control">
-                  <a class="button">
-                    <span>Json</span>
-                  </a>
-                </p>
-              </div>
-              <table>
-                <h2>Http Headers</h2>
-                <tr
-                  v-for="(v,k) in item.header"
-                  :key="k"><th>{{ k }}</th><td>{{ v.join("\n") }}</td></tr>
-              </table>
-              <div>
-                <input type="text" >
-                <button/>
+              <div class="container">
+                <div class="columns">
+                  <div class="column">
+                    <h3>HTTP Headers</h3>
+                    <table>
+                      <tr
+                        v-for="(v,k) in item.header"
+                        :key="k">
+                        <th>{{ k }}</th>
+                        <td>{{ v.join("\n") }}</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="column">
+                    <h3>Body</h3>
+                    <div>
+                      {{ item.body }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-      </div></div></div>
+          </div>
+        </div>
+      </div>
     </div>
 </div></template>
 
@@ -168,5 +164,38 @@ export default {
 }
 .hero-subtitle {
   font-size: 1rem;
+}
+
+.content h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #666;
+  .field {
+    display: inline-flex !important;
+    vertical-align: text-top;
+    font-size: 1rem;
+
+    .control {
+      margin-bottom: 0 !important;
+      .button {
+        padding: 0.2rem 0.3rem;
+        height: auto;
+        font-weight: normal;
+      }
+    }
+  }
+}
+table {
+  font-size: 0.9rem;
+  tr {
+    &:hover {
+      background-color: #f3f3f9;
+      transition: background-color 0.25s;
+    }
+    & > * {
+      padding: 0.1rem 0.3rem !important;
+      vertical-align: middle !important;
+    }
+  }
 }
 </style>
