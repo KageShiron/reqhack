@@ -15,7 +15,7 @@
       <div class="columns">
         <div class="column">
           <div
-            v-for="(item,key) in items"
+            v-for="(item,key) in items.reverse()"
             :key="key"
             class="card"
           >
