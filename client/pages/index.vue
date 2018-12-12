@@ -9,7 +9,7 @@
           type="text"
         >
       </div>
-      <span>.reqhack00.esora.xyz</span>
+      <span>.{{ host }}</span>
 
     </div>
     <div class="field">
