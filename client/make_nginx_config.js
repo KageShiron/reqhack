@@ -11,8 +11,8 @@ console.log(`upstream reqhack {
   }
 
   resolver 127.0.0.1;
-  access_log /var/log/nginx/access2.log;
-  error_log /var/log/nginx/error2.log;
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
 
   server {
       server_name ${host};
@@ -53,10 +53,14 @@ console.log(`upstream reqhack {
           : ''
       }
       location / {
+          set_by_lua_block $reqhack_raw_request { ngx.req.raw_header() }
           rewrite /(.*) /v1/$subdomain/in/$1 break;
           proxy_set_header X-Reqhack-Real-IP-${random} $remote_addr;
-          proxy_set_header X-Reqhack-Real-Port-${random} $remote_user;
-          proxy_set_header X-Reqhack-Real-Header-${random} $request;
+          proxy_set_header X-Reqhack-Real-Port-${random} $remote_port;
+          proxy_set_header X-Reqhack-Real-User-${random} $remote_port;
+          proxy_set_header X-Reqhack-Real-Scheme-${random} $scheme;
+          proxy_set_header X-Reqhack-Real-Request-${random} $scheme;
+          proxy_set_header X-Reqhack-Real-Request-${random} $reqhack_raw_request;
           proxy_set_header Host $http_host;
           proxy_pass http://reqhack;
       }

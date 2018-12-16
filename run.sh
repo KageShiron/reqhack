@@ -13,7 +13,7 @@ fi
 if [ "$1" == "build" ] ; then
     docker-compose up --build
 elif [ "$1" == "client" ] ; then
-    docker-compose up --no-deps --build client
+    docker-compose build --no-cache nginx
 else
     docker-compose up
 fi
