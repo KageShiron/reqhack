@@ -21,7 +21,9 @@
           >
             <header>
               <span class="http-method">{{ item.method }}</span>
-              <span>{{ item.host }}{{ item.requesturi }}</span>
+              <span>{{ item.scheme }}://{{ item.host }}{{
+                ((item.scheme === "http" && item.port === 80) || (item.scheme === "https" && item.port === 443)) ? "" : ":" + item.port
+              }}{{ item.requesturi }}</span>
               <span class="from-ip-title">From:</span>
               <div class="from-ip">
                 <span>
@@ -61,14 +63,18 @@
                 <div class="columns">
                   <div class="column">
                     <h3>HTTP Headers</h3>
-                    <table>
-                      <tr
-                        v-for="(v,k) in item.header"
-                        :key="k">
-                        <th>{{ k }}</th>
-                        <td>{{ v.join("\n") }}</td>
-                      </tr>
-                    </table>
+                    <div>
+                      <table>
+                        <tr
+                          v-for="(v,k) in item.header"
+                          :key="k">
+                          <th>{{ k }}</th>
+                          <td>{{ v.join("\n") }}</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div>{{ JSON.stringify(item.header,null,2) }}</div>
+                    <div>{{ item.rawrequest }}</div>
                   </div>
                   <div class="column">
                     <h3>Body</h3>
