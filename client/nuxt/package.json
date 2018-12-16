@@ -16,12 +16,13 @@
     "@nuxtjs/axios": "^5.0.0",
     "@nuxtjs/bulma": "^1.2.1",
     "@nuxtjs/font-awesome": "^1.0.3",
-    "@nuxtjs/moment": "^1.0.0",
+    "@nuxtjs/moment": "^1.1.0",
     "@nuxtjs/toast": "^3.0.1",
     "bulma-tooltip": "^2.0.2",
     "cross-env": "^5.2.0",
     "moment": "^2.22.2",
     "nuxt": "^2.0.0",
+    "nuxt-buefy": "^0.3.2",
     "nuxt-clipboard2": "^0.2.1"
   },
   "devDependencies": {

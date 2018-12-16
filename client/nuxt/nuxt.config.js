@@ -23,7 +23,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ['bulma-tooltip'],
+  css: [],
 
   /*
   ** Plugins to load before mounting the App
@@ -36,11 +36,11 @@ module.exports = {
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
     '@nuxtjs/axios',
-    '@nuxtjs/bulma',
     '@nuxtjs/moment',
     '@nuxtjs/font-awesome',
     'nuxt-clipboard2',
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    'nuxt-buefy'
   ],
   /*
   ** Axios module configuration

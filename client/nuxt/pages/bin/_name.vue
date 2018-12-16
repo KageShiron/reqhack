@@ -15,7 +15,7 @@
       <div class="columns">
         <div class="column">
           <div
-            v-for="(item,key) in items.reverse()"
+            v-for="(item,key) in items"
             :key="key"
             class="card"
           >
@@ -32,26 +32,29 @@
                 <div class="ip-actions">
                   <div class="field has-addons">
                     <p class="control">
-                      <a
-                        v-clipboard:copy="item.remoteaddr"
-                        v-clipboard:success="onCopySuccess"
-                        v-clipboard:error="onCopyError"
-                        target="_blank"
-                        data-tooltip="Copy remote IP address"
-                        class="button tooltip"><i class="fa fa-clipboard" /></a>
+                      <b-tooltip label="Copy remote IP address">
+                        <a
+                          v-clipboard:copy="item.remoteaddr"
+                          v-clipboard:success="onCopySuccess"
+                          v-clipboard:error="onCopyError"
+                          target="_blank"
+                          class="button"><i class="fa fa-clipboard" /></a>
+                      </b-tooltip>
                     </p>
                     <p class="control">
-                      <a
-                        :href="'https://censys.io/ipv4/'+item.remoteaddr"
-                        target="_blank"
-                        data-tooltip="View Censys"
-                        class="button tooltip"><img src="https://censys.io/favicon.ico"></a>
+                      <b-tooltip label="View in Censys">
+                        <a
+                          :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                          target="_blank"
+                          class="button"><img src="https://censys.io/favicon.ico"></a>
+                      </b-tooltip>
                     </p>
                     <p class="control">
-                      <a
-                        :href="'https://www.shodan.io/search?query='+item.remoteaddr"
-                        data-tooltip="View Shodan"
-                        class="button tooltip"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
+                      <b-tooltip label="View in Shodan">
+                        <a
+                          :href="'https://www.shodan.io/search?query='+item.remoteaddr"
+                          class="button"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
+                      </b-tooltip>
                   </p></div>
                 </div>
 
@@ -62,8 +65,36 @@
               <div class="container">
                 <div class="columns">
                   <div class="column">
-                    <h3>HTTP Headers</h3>
-                    <div>
+                    <div class="httpheaders">
+                      <h3>HTTP Headers</h3>
+                      <b-field>
+                        <b-radio-button
+                          v-model="headerActiveTab"
+                          size="is-small"
+                          native-value="table">
+                          <b-icon 
+                            icon="table" 
+                            custom-size="mdi-18px"/>Table
+                        </b-radio-button>
+                        <b-radio-button
+                          v-model="headerActiveTab"
+                          size="is-small"
+                          native-value="json">
+                          <b-icon 
+                            icon="json"
+                            custom-size="mdi-18px"/>JSON
+                        </b-radio-button>
+                        <b-radio-button
+                          v-model="headerActiveTab"
+                          size="is-small"
+                          native-value="raw">
+                          <b-icon 
+                            icon="format-columns"
+                            custom-size="mdi-18px"/>Raw
+                        </b-radio-button>
+                      </b-field>
+                    </div>
+                    <div v-if="headerActiveTab === 'table'">
                       <table>
                         <tr
                           v-for="(v,k) in item.header"
@@ -73,8 +104,11 @@
                         </tr>
                       </table>
                     </div>
-                    <div>{{ JSON.stringify(item.header,null,2) }}</div>
-                    <div>{{ item.rawrequest }}</div>
+                    <div v-if="headerActiveTab === 'json'"><b-input
+                      :value="JSON.stringify(item.header,null,2)"
+                      type="textarea"
+                      readonly/></div>
+                    <div v-if="headerActiveTab === 'raw'">{{ item.rawrequest }}</div>
                   </div>
                   <div class="column">
                     <h3>Body</h3>
@@ -100,6 +134,14 @@ export default {
   computed: {
     items() {
       return this.$store.state.bin.items[this.$route.params.name]
+    },
+    headerActiveTab: {
+      get() {
+        return this.$store.state.bin.headerActiveTab
+      },
+      set(v) {
+        this.$store.commit('bin/update_headerActiveTab', v)
+      }
     },
     host() {
       return location.host
@@ -202,6 +244,26 @@ table {
       padding: 0.1rem 0.3rem !important;
       vertical-align: middle !important;
     }
+  }
+}
+
+nav.tabs {
+  & > ul {
+    margin: 0;
+  }
+
+  &::before {
+    content: 'HTTP Headers';
+    font-size: 1rem;
+    font-weight: bold;
+    color: #666;
+  }
+}
+
+.httpheaders {
+  display: flex;
+  h3 {
+    margin-right: 1rem;
   }
 }
 </style>
