@@ -1,4 +1,4 @@
 #!/bin/sh
-/go/bin/migrate /go/src/github.com/KageShiron/reqhack/server/
-crond -f -d 8
+/go/src/github.com/KageShiron/reqhack/server/migrate.linux-amd64 -path ./sql/ -database mysql://${DATA_SOURCE_NAME} up
+cron
 /go/bin/server
