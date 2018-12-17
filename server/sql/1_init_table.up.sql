@@ -3,7 +3,8 @@ USE reqhack;
 
 CREATE TABLE `bin` (
   `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR (32) NOT NULL UNIQUE
+  `name` VARCHAR (32) NOT NULL UNIQUE,
+  `created_at` datetime  default current_timestamp,
 );
 
 CREATE TABLE `request` (
