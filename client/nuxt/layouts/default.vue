@@ -22,31 +22,7 @@
         </div>
         <div 
           id="navMenu" 
-          class="navbar-menu">
-          <div class="navbar-start">
-            <a 
-              class="navbar-item" 
-              href="admin.html">
-              Home
-            </a>
-            <a 
-              class="navbar-item" 
-              href="admin.html">
-              Orders
-            </a>
-            <a 
-              class="navbar-item" 
-              href="admin.html">
-              Payments
-            </a>
-            <a 
-              class="navbar-item" 
-              href="admin.html">
-              Exceptions
-            </a>
-          </div>
-
-        </div>
+          class="navbar-menu"/>
       </div>
     </nav>
     <nuxt/>
