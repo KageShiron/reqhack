@@ -43,6 +43,13 @@
       <div class="container">
         <h2 class="title">最近の更新</h2>
         <ul>
+          <li>
+            2018/12/24
+            <ul>
+              <li>サーバーポートが間違っている不具合を修正</li>
+              <li>クライアントIPアドレスのToolTipでクライアントポートを確認できるように</li>
+            </ul>
+          </li>
           <li>内部公開しました</li>
         </ul>
       </div>
@@ -50,7 +57,6 @@
         <h2 class="title">既知の不具合</h2>
         <ul>
           <li>一時的にhttpsが使えません</li>
-          <li>サーバーポートを表示するところにリモートポート(クライアント側のポート)が表示されてる</li>
         </ul>
       </div>
       <div class="container">
