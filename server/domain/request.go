@@ -19,8 +19,8 @@ type Request struct {
 	ID            int64           `json:"-"`
 	Bin           *Bin            `json:"-"`
 	Time          time.Time       `json:"time"`
-	Port          int             `json:"port"`
-	User          string          `json:"user"`
+	ServerPort    int             `json:"server_port"`
+	UserPort      int             `json:"user_port"`
 	Scheme        string          `json:"scheme"`
 	RawRequest    string          `json:"rawrequest"`
 	Method        string          `json:"method"`
@@ -43,8 +43,8 @@ type Bin struct {
 
 var reqhackRandom = os.Getenv("REQHACK_RANDOM")
 var realIP = "X-Reqhack-Real-IP-" + reqhackRandom
-var realPort = "X-Reqhack-Real-Port-" + reqhackRandom
-var realUser = "X-Reqhack-Real-User-" + reqhackRandom
+var realUserPort = "X-Reqhack-Real-UserPort-" + reqhackRandom
+var realServerPort = "X-Reqhack-Real-ServerPort-" + reqhackRandom
 var realScheme = "X-Reqhack-Real-Scheme-" + reqhackRandom
 var realRequest = "X-Reqhack-Real-Request-" + reqhackRandom
 var baseHost = os.Getenv("REQHACK_BASEHOST")
@@ -57,14 +57,14 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	r.ParseForm()
 	//m, err := r.MultipartReader()
 	ip := r.Header.Get(realIP)
-	port, _ := strconv.Atoi(r.Header.Get(realPort))
-	user := r.Header.Get(realUser)
+	userPort, _ := strconv.Atoi(r.Header.Get(realUserPort))
+	serverPort, _ := strconv.Atoi(r.Header.Get(realServerPort))
 	scheme := r.Header.Get(realScheme)
 	request, _ := base64.StdEncoding.DecodeString(r.Header.Get(realRequest))
 	prefix := ""
 	r.Header.Del(realIP)
-	r.Header.Del(realPort)
-	r.Header.Del(realUser)
+	r.Header.Del(realServerPort)
+	r.Header.Del(realUserPort)
 	r.Header.Del(realScheme)
 	r.Header.Del(realRequest)
 	if ip != "" {
@@ -80,8 +80,8 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 
 	req = &Request{
 		Time:       time,
-		Port:       port,
-		User:       user,
+		ServerPort: serverPort,
+		UserPort:   userPort,
 		Scheme:     scheme,
 		RawRequest: string(request),
 		Method:     r.Method,

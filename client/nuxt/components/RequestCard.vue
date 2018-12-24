@@ -3,13 +3,13 @@
     <header>
       <span class="http-method">{{ item.method }}</span>
       <span>{{ item.scheme }}://{{ item.host }}{{
-        ((item.scheme === "http" && item.port === 80) || (item.scheme === "https" && item.port === 443)) ? "" : ":" + item.port
+        ((item.scheme === "http" && item.server_port === 80) || (item.scheme === "https" && item.server_port === 443)) ? "" : ":" + item.server_port
       }}{{ item.requesturi }}</span>
       <span class="from-ip-title">From:</span>
       <div class="from-ip">
-        <span>
+        <b-tooltip :label="'client port :' + item.user_port">
           {{ item.remoteaddr }}
-        </span>
+        </b-tooltip>
         <div class="ip-actions">
           <div class="field has-addons">
             <p class="control">
