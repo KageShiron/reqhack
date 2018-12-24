@@ -27,6 +27,7 @@ type Request struct {
 	Proto         string          `json:"protocol"`
 	Header        http.Header     `json:"header"`
 	Body          []byte          `json:"body"`
+	BodyLength    int             `json:"body_length"`
 	Host          string          `json:"host"`
 	Form          url.Values      `json:"form"`
 	PostForm      url.Values      `json:"postform"`
@@ -88,6 +89,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		Proto:      r.Proto,
 		Header:     r.Header,
 		Body:       body,
+		BodyLength: len(body),
 		Host:       r.Host,
 		Form:       r.Form,
 		PostForm:   r.PostForm,

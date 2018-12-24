@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
   <div class="card" >
     <header>
       <span class="http-method">{{ item.method }}</span>
@@ -16,7 +16,7 @@
               <b-tooltip label="Copy remote IP address">
                 <a
                   v-clipboard:copy="item.remoteaddr"
-                  v-clipboard:success="onCopySuccess"
+                  v-clipboard:success="onCopyBodySuccess"
                   v-clipboard:error="onCopyError"
                   target="_blank"
                   class="button"><i class="fa fa-clipboard" /></a>
@@ -46,7 +46,7 @@
       <div class="container">
         <div class="columns">
           <div class="column">
-            <div class="httpheaders">
+            <div class="info-header">
               <h3>HTTP Headers</h3>
               <b-field>
                 <b-radio-button
@@ -95,11 +95,75 @@
               readonly/></div>
           </div>
           <div class="column">
-            <h3>Body</h3>
+            <div class="info-header">
+              <h3>Body( {{ item.body_length || 0 }} bytes )</h3>
+              <b-field grouped>
+                <b-select
+                  placeholder="Viewer"
+                  size="is-small">
+                  <optgroup label="Text">
+                    <option value="text">PlainText</option>
+                    <option value="json">JSON</option>
+                    <option value="form">Form</option>
+                    <option value="xml">XML</option>
+                  </optgroup>
+                  <optgroup label="Binary">
+                    <option value="image">Image</option>
+                    <option value="image">Hex</option>
+                  </optgroup>
+                </b-select>
+                <b-field>
+                  <p class="control">
+                    <b-dropdown>
+                      <button
+                        slot="trigger"
+                        size="is-small"
+                        class="button is-primary">
+                        <span>Encode/Decode</span>
+                        <b-icon icon="menu-down"/>
+                      </button>
+                      <b-dropdown-item @click="bodyAction('decodeURI')">decodeURI</b-dropdown-item>
+                      <b-dropdown-item @click="bodyAction('decodeURIComponent')">decodeURIComponent</b-dropdown-item>
+                      <b-dropdown-item @click="bodyAction('atob')">decode Base64 (atob)</b-dropdown-item>
+                      <b-dropdown-item :separator="true"/>
+                      <b-dropdown-item @click="bodyAction('encodeURI')">encodeURI</b-dropdown-item>
+                      <b-dropdown-item @click="bodyAction('encodeURIComponent')">encodeURIComponent</b-dropdown-item>
+                      <b-dropdown-item @click="bodyAction('btoa')">encode Base64 (btoa)</b-dropdown-item>
+                      <b-dropdown-item :separator="true"/>
+                      <b-dropdown-item @click="bodyAction('reset')">Reset</b-dropdown-item>
+                    </b-dropdown>
+                  </p>
+                  <p class="control">
+                    <a
+                      v-clipboard:copy="body"
+                      v-clipboard:success="onCopySuccess"
+                      v-clipboard:error="onCopyError"
+                      target="_blank"
+                      class="button"><i 
+                        class="fa fa-clipboard" 
+                        custom-size="mdi-18px" /></a>
+                  </p>
+                  <p class="control">
+                    <a
+                      :href="'https://censys.io/ipv4/'+item.remoteaddr"
+                      target="_blank"
+                      class="button">
+                      <b-icon
+                        icon="cloud-download"
+                        custom-size="mdi-18px" />
+                    </a>
+                  </p>
+                </b-field>
+              </b-field>
+            </div>
             <div>
-              {{ item.body }}
+              <b-input
+                :value="body"
+                type="textarea"
+                readonly/>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -159,25 +223,15 @@
     font-size: 1rem;
     color: #666;
   }
-  .httpheaders {
+  .info-header {
     margin-bottom: 0.3rem;
     display: flex;
-    h3 {
-      .field {
-        display: inline-flex !important;
-        vertical-align: text-top;
-        font-size: 1rem;
-
-        .control {
-          margin-bottom: 0 !important;
-
-          .button {
-            padding: 0.2rem 0.3rem;
-            height: auto;
-            font-weight: normal;
-          }
-        }
-      }
+    button,
+    a {
+      font-size: 0.75rem;
+    }
+    .control {
+      margin: 0;
     }
   }
 }
@@ -218,7 +272,21 @@ export default {
     }
   },
   data() {
-    return { headerActiveTab: 'table' }
+    return {
+      headerActiveTab: 'table',
+      bodyActionStack: [atob]
+    }
+  },
+  computed: {
+    body(vm) {
+      while (true) {
+        try {
+          return vm.bodyActionStack.reduce((x, y) => y(x), this.item.body)
+        } catch {
+          vm.bodyActionStack.pop()
+        }
+      }
+    }
   },
   methods: {
     onCopySuccess(e) {
@@ -228,8 +296,41 @@ export default {
         position: 'is-top-right'
       })
     },
+    onCopyBodySuccess(e) {
+      this.$toast.open({
+        message: 'Copied body data',
+        type: 'is-success',
+        position: 'is-top-right'
+      })
+    },
     onCopyError(e) {
       this.$toast.error('Copied Failed...', { duration: 3000 })
+    },
+    bodyAction(e) {
+      switch (e) {
+        case 'decodeURI':
+          this.bodyActionStack.push(decodeURI)
+          break
+        case 'decodeURIComponent':
+          this.bodyActionStack.push(decodeURIComponent)
+          break
+        case 'atob':
+          this.bodyActionStack.push(atob)
+          break
+        case 'encodeURI':
+          this.bodyActionStack.push(encodeURI)
+          break
+        case 'encodeURIComponent':
+          this.bodyActionStack.push(encodeURIComponent)
+          break
+        case 'btoa':
+          this.bodyActionStack.push(btoa)
+          break
+        case 'reset':
+          this.bodyActionStack = [atob]
+          break
+      }
+      console.log(this.bodyActionStack)
     }
   }
 }
