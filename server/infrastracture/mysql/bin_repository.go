@@ -31,13 +31,13 @@ func (m *mysqlBinRepository) Add(name string) (*domain.Bin, error) {
 // Get returns a bin
 func (m *mysqlBinRepository) Get(name string) (bin *domain.Bin, err error) {
 	bin = &domain.Bin{}
-	err = m.Conn.QueryRowx("SELECT * FROM bin WHERE name=?", name).StructScan(bin)
+	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=?", name).StructScan(bin)
 	return
 }
 
 // GetById returns a bin by id
 func (m *mysqlBinRepository) GetByID(id int64) (bin *domain.Bin, err error) {
 	bin = &domain.Bin{}
-	err = m.Conn.QueryRowx("SELECT * FROM bin WHERE id=?", id).StructScan(bin)
+	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE id=?", id).StructScan(bin)
 	return
 }
