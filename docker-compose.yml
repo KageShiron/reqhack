@@ -2,7 +2,8 @@ version: "3.5"
 services:
 
   reqhack-server:
-    build: ./server
+    build:
+      context: ./server
     ports:
       - 8081:8081
     volumes:
@@ -11,19 +12,19 @@ services:
       - database
     environment:
       - DB_NAME=reqhack
-      - DATA_SOURCE_NAME=root:mysql@tcp(database:3306)/reqhack
       - REQHACK_BASEHOST
+      - DATA_SOURCE_NAME=root:${MYSQL_ROOT_PASSWORD}@tcp(database:3306)/reqhack
       - REQHACK_RANDOM
-    entrypoint: ["./wait-for-it.sh","database:3306","--","/go/bin/server"]
+    entrypoint: ["./wait-for-it.sh","database:3306","--","./entry.sh"]
 
   database:
     image: mysql
     volumes:
-      - ./server/sql:/docker-entrypoint-initdb.d
+      - ./mysql/nativepassword.cnf:/etc/mysql/conf.d/nativepassword.cnf
     environment:
-      - MYSQL_ROOT_PASSWORD=mysql
-      - MYSQL_USER=reqhacker
-      - MYSQL_PASSWORD=reqhacker
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
   nginx:
     build:
       context: ./client
@@ -39,3 +40,6 @@ services:
       - REQHACK_RANDOM
     links:
       - reqhack-server
+    volumes:
+      - /var/lib/waagent/${REQHACK_CERT}:/etc/nginx/ssl/cert.crt
+      - /var/lib/waagent/${REQHACK_PRIVATE}:/etc/nginx/ssl/cert.prv
