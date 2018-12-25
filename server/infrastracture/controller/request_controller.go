@@ -49,6 +49,10 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 	if !ok || num == "" {
 		//todo://
 		logs, err := rc.Request.GetRange(bin.ID, 0, 100)
+		if err != nil {
+			utils.RestError(w,500, fmt.Sprintf("Internal Error %s",err))
+			return
+		}
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		if json.NewEncoder(w).Encode(logs); err != nil {
 			utils.RestError(w, 500, fmt.Sprintf(`Failed to create JSON`))

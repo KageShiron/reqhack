@@ -44,10 +44,11 @@
         <h2 class="title">最近の更新</h2>
         <ul>
           <li>
-            2018/12/24
-            <ul>
+            2018/12/25
+            <ul style="margin-left:2rem">
               <li>サーバーポートが間違っている不具合を修正</li>
               <li>クライアントIPアドレスのToolTipでクライアントポートを確認できるように</li>
+              <li>本文の解析機能を強化</li>
             </ul>
           </li>
           <li>内部公開しました</li>
@@ -64,6 +65,7 @@
         <ul>
           <li>既知の不具合の修正</li>
           <li>curlでコピー</li>
+          <li>Multipart Form関連の実装</li>
         </ul>
       </div>
     </div>

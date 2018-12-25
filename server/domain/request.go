@@ -31,9 +31,14 @@ type Request struct {
 	Host          string          `json:"host"`
 	Form          url.Values      `json:"form"`
 	PostForm      url.Values      `json:"postform"`
-	MultipartForm *multipart.Form `json:"multipartform"`
+	MultipartForm []File 		  `json:"multipartform"`
 	RemoteAddr    string          `json:"remoteaddr"`
 	RequestURI    string          `json:"requesturi"`
+}
+
+type File struct {
+	multipart.FileHeader
+	Body []byte `json:body`
 }
 
 // A Bin represents a bin object
@@ -54,9 +59,19 @@ var baseHost = os.Getenv("REQHACK_BASEHOST")
 func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	body, err := ioutil.ReadAll(r.Body)
 	// reassign body
-	r.Body = ioutil.NopCloser(bytes.NewReader(body))
-	r.ParseForm()
+	if strings.HasPrefix( r.Header.Get("Content-Type") , "multipart/form-data") {
+		r.Body = ioutil.NopCloser(bytes.NewReader(body))
+		if err = r.ParseMultipartForm(1024 * 1024 * 100); err != nil {
+			return nil, err
+		}
+	}else{
+		r.ParseForm()
+	}
 	//m, err := r.MultipartReader()
+	if err != nil {
+		return nil, err
+	}
+	//m.ReadForm()
 	ip := r.Header.Get(realIP)
 	userPort, _ := strconv.Atoi(r.Header.Get(realUserPort))
 	serverPort, _ := strconv.Atoi(r.Header.Get(realServerPort))
@@ -79,6 +94,21 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		ip = r.RemoteAddr
 	}
 
+	var files []File = nil
+	if r.MultipartForm != nil {
+		for _, fileHeader := range r.MultipartForm.File {
+			for _, hdr := range fileHeader {
+				file,err := hdr.Open()
+				if err != nil {
+					return nil,err
+				}
+				if body,err := ioutil.ReadAll(file) ; err == nil {
+					files = append(files, File{FileHeader: *hdr, Body:body})
+				}
+			}
+		}
+	}
+
 	req = &Request{
 		Time:       time,
 		ServerPort: serverPort,
@@ -92,6 +122,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		BodyLength: len(body),
 		Host:       r.Host,
 		Form:       r.Form,
+		MultipartForm:files,
 		PostForm:   r.PostForm,
 		RemoteAddr: ip,
 		RequestURI: strings.TrimPrefix(r.RequestURI, prefix),
