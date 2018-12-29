@@ -6,6 +6,15 @@
           <h1 class="title">Inspect {{ $route.params.name }}</h1>
           <h2 class="subtitle">
             Logger URL: <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
+
+            <a
+              v-clipboard:copy="`${protocol}//${$route.params.name}.${host}/`"
+              v-clipboard:success="onCopySuccess"
+              v-clipboard:error="onCopyError"
+              target="_blank"
+              class="button">
+              <i class="fa fa-clipboard" />
+            </a>
           </h2>
         </div>
       </div>
@@ -52,6 +61,18 @@ export default {
     created() {
       return this.$store.state.created
     }
+  },
+  methods: {
+    onCopySuccess(e) {
+      this.$toast.open({
+        message: 'Copied ' + e.text,
+        type: 'is-success',
+        position: 'is-top-right'
+      })
+    },
+    onCopyError(e) {
+      this.$toast.error('Copied Failed...', { duration: 3000 })
+    }
   }
 }
 </script>
@@ -62,5 +83,8 @@ export default {
 }
 .hero-subtitle {
   font-size: 1rem;
+}
+.button {
+  vertical-align: baseline;
 }
 </style>

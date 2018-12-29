@@ -2,12 +2,26 @@
   <div class="card" >
     <header>
       <span class="http-method">{{ item.method }}</span>
-      <span>{{ item.scheme }}://{{ item.host }}{{
-        ((item.scheme === "http" && item.server_port === 80) || (item.scheme === "https" && item.server_port === 443)) ? "" : ":" + item.server_port
-      }}{{ item.requesturi }}</span>
+      <b-field class="url">
+        <b-input
+          :value="url"
+          readonly
+          class="url-text"
+          type="text" />
+        <p 
+          class="control">
+          <a
+            v-clipboard:copy="url"
+            v-clipboard:success="onCopyBodySuccess"
+            v-clipboard:error="onCopyError"
+            target="_blank"
+            class="button">
+          <i class="fa fa-clipboard mdi-18px" /></a>
+        </p>
+      </b-field>
       <span class="from-ip-title">From:</span>
       <div class="from-ip">
-        <b-tooltip :label="'client port :' + item.user_port">
+        <b-tooltip :label="'Client port :' + item.user_port">
           {{ item.remoteaddr }}
         </b-tooltip>
         <div class="ip-actions">
@@ -34,6 +48,7 @@
               <b-tooltip label="View in Shodan">
                 <a
                   :href="'https://www.shodan.io/search?query='+item.remoteaddr"
+                  target="_blank"
                   class="button"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
               </b-tooltip>
           </p></div>
@@ -180,8 +195,9 @@
     padding: 0.5em;
     border-bottom: 1px solid #ccc;
     display: grid;
-    grid-template-columns: min-content max-content auto;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 5px;
+    grid-template-rows: auto auto;
 
     & > :last-child {
       margin-left: auto;
@@ -192,12 +208,37 @@
       color: white;
       border-radius: 3px;
       padding: 2px 5px;
-      margin-right: 0.5em;
+      max-width: 100px;
+      word-break: break-all;
+    }
+
+    .url {
+      margin: 0;
+      & > * {
+        height: 1.8rem;
+      }
+      .url-text {
+        flex-grow: 1;
+        input {
+          padding: 0.1rem 0.3rem;
+          height: 1.8rem;
+        }
+      }
+
+      p a {
+        padding: 0.1rem 0.5rem;
+        height: 1.8rem;
+      }
+    }
+
+    .from-ip-title {
+      align-self: center;
     }
 
     time {
       grid-column: 3;
       grid-row: 1/3;
+      text-align: right;
     }
 
     .from-ip .button {
@@ -286,6 +327,14 @@ export default {
           vm.bodyActionStack.pop()
         }
       }
+    },
+    url() {
+      return `${this.item.scheme}://${this.item.host}${
+        (this.item.scheme === 'http' && this.item.server_port === 80) ||
+        (this.item.scheme === 'https' && this.item.server_port === 443)
+          ? ''
+          : ':' + this.item.server_port
+      }${this.item.requesturi}`
     }
   },
   methods: {
