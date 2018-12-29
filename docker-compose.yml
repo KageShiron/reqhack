@@ -20,7 +20,8 @@ services:
   database:
     image: mysql
     volumes:
-      - ./mysql/nativepassword.cnf:/etc/mysql/conf.d/nativepassword.cnf
+      - ./mysql/conf.d/nativepassword.cnf:/etc/mysql/conf.d/nativepassword.cnf
+      - ./mysql/init/:/docker-entrypoint-initdb.d/
     environment:
       - MYSQL_ROOT_PASSWORD
       - MYSQL_USER

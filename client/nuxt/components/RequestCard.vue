@@ -114,6 +114,7 @@
               <h3>Body( {{ item.body_length || 0 }} bytes )</h3>
               <b-field grouped>
                 <b-select
+                  v-model="viewer"
                   placeholder="Viewer"
                   size="is-small">
                   <optgroup label="Text">
@@ -123,8 +124,12 @@
                     <option value="xml">XML</option>
                   </optgroup>
                   <optgroup label="Binary">
-                    <option value="image">Image</option>
-                    <option value="image">Hex</option>
+                    <option 
+                      value="image" 
+                      disabled>Image (WIP)</option>
+                    <option 
+                      value="image" 
+                      disabled>Hex (WIP)</option>
                   </optgroup>
                 </b-select>
                 <b-field>
@@ -151,7 +156,7 @@
                   <p class="control">
                     <a
                       v-clipboard:copy="body"
-                      v-clipboard:success="onCopySuccess"
+                      v-clipboard:success="onCopyBodySuccess"
                       v-clipboard:error="onCopyError"
                       target="_blank"
                       class="button"><i 
@@ -160,9 +165,8 @@
                   </p>
                   <p class="control">
                     <a
-                      :href="'https://censys.io/ipv4/'+item.remoteaddr"
-                      target="_blank"
-                      class="button">
+                      class="button"
+                      @click="download">
                       <b-icon
                         icon="cloud-download"
                         custom-size="mdi-18px" />
@@ -171,11 +175,23 @@
                 </b-field>
               </b-field>
             </div>
-            <div>
+            <div v-if="viewer !== 'form'">
               <b-input
                 :value="body"
                 type="textarea"
                 readonly/>
+            </div>
+            <div v-if="viewer === 'form'">
+              <table>
+                <tr 
+                  v-for="[key,val] in Array.from(form)"
+                  :key="key">
+                  <th>{{ key }}</th>
+                  <td><b-input 
+                    :value="val" 
+                    readonly /></td>
+                </tr>
+              </table>
             </div>
           </div>
 
@@ -305,6 +321,22 @@ nav.tabs {
 }
 </style>
 <script>
+function getDefaultViewer(mime) {
+  if (mime === 'application/x-www-form-urlencoded') {
+    return 'form'
+  }
+  if (mime === 'application/json') {
+    return 'json'
+  }
+  if (mime.startsWith('image/')) {
+    return 'image'
+  }
+  if (mime === 'aplication/xml') {
+    return 'xml'
+  }
+  return 'text'
+}
+
 export default {
   props: {
     item: {
@@ -315,19 +347,38 @@ export default {
   data() {
     return {
       headerActiveTab: 'table',
-      bodyActionStack: [atob]
+      bodyActionStack: [atob],
+      viewer: 'text'
     }
   },
   computed: {
     body(vm) {
+      let res
       while (true) {
         try {
-          return vm.bodyActionStack.reduce((x, y) => y(x), this.item.body)
+          res = vm.bodyActionStack.reduce((x, y) => y(x), this.item.body)
+          break
         } catch {
           vm.bodyActionStack.pop()
         }
       }
+      if (vm.viewer === 'json') {
+        try {
+          return JSON.stringify(JSON.parse(res), null, 2)
+        } catch (e) {
+          return 'JSON Parse Error.\n' + e
+        }
+      } else if (vm.viewer === 'xml') {
+        const dom = new DOMParser().parseFromString(res, 'application/xml')
+        if (dom.documentElement.nodeName === 'parsererror') {
+          return dom.documentElement.childNodes[0].nodeValue
+        }
+        return new XMLSerializer().serializeToString(dom)
+      }
+
+      return res
     },
+
     url() {
       return `${this.item.scheme}://${this.item.host}${
         (this.item.scheme === 'http' && this.item.server_port === 80) ||
@@ -335,7 +386,23 @@ export default {
           ? ''
           : ':' + this.item.server_port
       }${this.item.requesturi}`
+    },
+    form(vm) {
+      try {
+        console.log(new URLSearchParams(vm.body))
+        return new URLSearchParams(vm.body).entries()
+      } catch {
+        return {}
+      }
     }
+  },
+  mounted() {
+    this.viewer = getDefaultViewer(
+      (this.item.header &&
+        this.item.header['Content-Type'] &&
+        this.item.header['Content-Type'][0]) ||
+        ''
+    )
   },
   methods: {
     onCopySuccess(e) {
@@ -354,6 +421,15 @@ export default {
     },
     onCopyError(e) {
       this.$toast.error('Copied Failed...', { duration: 3000 })
+    },
+    download() {
+      var blob = new Blob([this.body], { type: 'text/plain' })
+      let link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = 'body.txt'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     },
     bodyAction(e) {
       switch (e) {

@@ -1,4 +1,3 @@
-CREATE DATABASE IF NOT EXISTS `reqhack`;
 USE reqhack;
 
 CREATE TABLE `bin` (
