@@ -91,10 +91,13 @@
               </b-field>
             </div>
             <div v-if="headerActiveTab === 'table'">
-              <table>
+              <table class="http-header-table">
                 <tr
                   v-for="(v,k) in item.header"
                   :key="k">
+                  <td><a 
+                    :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k" 
+                    target="_blank"><img src="/icon/mdn.svg"></a></td>
                   <th>{{ k }}</th>
                   <td>{{ v.join("\n") }}</td>
                 </tr>
@@ -114,6 +117,7 @@
               <h3>Body( {{ item.body_length || 0 }} bytes )</h3>
               <b-field grouped>
                 <b-select
+                  :disabled="disabled"
                   v-model="viewer"
                   placeholder="Viewer"
                   size="is-small">
@@ -134,7 +138,7 @@
                 </b-select>
                 <b-field>
                   <p class="control">
-                    <b-dropdown>
+                    <b-dropdown :disabled="disabled">
                       <button
                         slot="trigger"
                         size="is-small"
@@ -158,13 +162,17 @@
                       v-clipboard:copy="body"
                       v-clipboard:success="onCopyBodySuccess"
                       v-clipboard:error="onCopyError"
+                      :disabled="disabled"
                       target="_blank"
-                      class="button"><i 
-                        class="fa fa-clipboard" 
-                        custom-size="mdi-18px" /></a>
+                      class="button">
+                      <b-icon
+                        icon="clipboard"
+                        pack="fa" />
+                    </a>
                   </p>
                   <p class="control">
                     <a
+                      :disabled="disabled"
                       class="button"
                       @click="download">
                       <b-icon
@@ -178,6 +186,7 @@
             <div v-if="viewer !== 'form'">
               <b-input
                 :value="body"
+                :disabled="disabled"
                 type="textarea"
                 readonly/>
             </div>
@@ -204,6 +213,9 @@
 .textarea {
   height: 15em !important;
 }
+a[disabled] {
+  pointer-events: none;
+}
 .card {
   margin-bottom: 1em;
 
@@ -226,6 +238,9 @@
       padding: 2px 5px;
       max-width: 100px;
       word-break: break-all;
+      height: 24px;
+      align-self: center;
+      font-size: 13px;
     }
 
     .url {
@@ -249,6 +264,7 @@
 
     .from-ip-title {
       align-self: center;
+      font-size: 13px;
     }
 
     time {
@@ -293,7 +309,7 @@
   }
 }
 
-table {
+table.http-header-table {
   font-size: 0.9rem;
   tr {
     &:hover {
@@ -303,6 +319,23 @@ table {
     & > * {
       padding: 0.1rem 0.3rem !important;
       vertical-align: middle !important;
+    }
+
+    & > td:first-child {
+      min-width: 20px;
+      padding: 0 !important;
+      a {
+        vertical-align: middle !important;
+        img {
+          opacity: 0.5;
+          height: 16px;
+          width: 16px;
+          display: block;
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
     }
   }
 }
@@ -394,6 +427,9 @@ export default {
       } catch {
         return {}
       }
+    },
+    disabled() {
+      return this.item.body_length !== 0
     }
   },
   mounted() {

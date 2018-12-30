@@ -3,7 +3,7 @@
     <section class="hero">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title">Inspect {{ $route.params.name }}</h1>
+          <h1 class="title"><span style="font-size:80%;color:#666;">Inspect</span> {{ $route.params.name }}</h1>
           <h2 class="subtitle">
             Logger URL: <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
 
