@@ -23,7 +23,8 @@
     "moment": "^2.22.2",
     "nuxt": "^2.0.0",
     "nuxt-buefy": "^0.3.2",
-    "nuxt-clipboard2": "^0.2.1"
+    "nuxt-clipboard2": "^0.2.1",
+    "nuxt-material-design-icons": "^1.0.4"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
