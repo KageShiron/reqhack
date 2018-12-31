@@ -14,7 +14,6 @@ module.exports = {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
-
   /*
   ** Customize the progress-bar color
   */
@@ -23,7 +22,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: [],
+  css: ['@/assets/css/materialdesignicons.min.css'],
 
   /*
   ** Plugins to load before mounting the App
@@ -40,8 +39,9 @@ module.exports = {
     '@nuxtjs/font-awesome',
     'nuxt-clipboard2',
     '@nuxtjs/toast',
-    'nuxt-buefy'
+    ['nuxt-buefy', { materialDesignIcons: false }]
   ],
+
   /*
   ** Axios module configuration
   */
@@ -58,6 +58,8 @@ module.exports = {
     */
     extend(config, ctx) {
       // Run ESLint on save
+
+      config.devtool = 'eval-source-map'
       if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
           enforce: 'pre',

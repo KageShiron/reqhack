@@ -41,7 +41,7 @@
                 <a
                   :href="'https://censys.io/ipv4/'+item.remoteaddr"
                   target="_blank"
-                  class="button"><img src="https://censys.io/favicon.ico"></a>
+                  class="button"><img src="/icon/censys.ico"></a>
               </b-tooltip>
             </p>
             <p class="control">
@@ -49,7 +49,7 @@
                 <a
                   :href="'https://www.shodan.io/search?query='+item.remoteaddr"
                   target="_blank"
-                  class="button"><img src="https://static.shodan.io/shodan/img/favicon.png"></a>
+                  class="button"><img src="/icon/shodan.png"></a>
               </b-tooltip>
           </p></div>
         </div>
@@ -95,8 +95,9 @@
                 <tr
                   v-for="(v,k) in item.header"
                   :key="k">
-                  <td><a 
-                    :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k" 
+                  <td><a
+                    :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
+                    title="View in MDN"
                     target="_blank"><img src="/icon/mdn.svg"></a></td>
                   <th>{{ k }}</th>
                   <td>{{ v.join("\n") }}</td>
@@ -128,11 +129,11 @@
                     <option value="xml">XML</option>
                   </optgroup>
                   <optgroup label="Binary">
-                    <option 
-                      value="image" 
+                    <option
+                      value="image"
                       disabled>Image (WIP)</option>
-                    <option 
-                      value="image" 
+                    <option
+                      value="image"
                       disabled>Hex (WIP)</option>
                   </optgroup>
                 </b-select>
@@ -192,12 +193,12 @@
             </div>
             <div v-if="viewer === 'form'">
               <table>
-                <tr 
+                <tr
                   v-for="[key,val] in Array.from(form)"
                   :key="key">
                   <th>{{ key }}</th>
-                  <td><b-input 
-                    :value="val" 
+                  <td><b-input
+                    :value="val"
                     readonly /></td>
                 </tr>
               </table>
@@ -385,23 +386,15 @@ export default {
     }
   },
   computed: {
-    body(vm) {
-      let res
-      while (true) {
-        try {
-          res = vm.bodyActionStack.reduce((x, y) => y(x), this.item.body)
-          break
-        } catch {
-          vm.bodyActionStack.pop()
-        }
-      }
-      if (vm.viewer === 'json') {
+    body() {
+      let res = this.bodyActionStack.reduce((x, y) => y(x), this.item.body)
+      if (this.viewer === 'json') {
         try {
           return JSON.stringify(JSON.parse(res), null, 2)
         } catch (e) {
           return 'JSON Parse Error.\n' + e
         }
-      } else if (vm.viewer === 'xml') {
+      } else if (this.viewer === 'xml') {
         const dom = new DOMParser().parseFromString(res, 'application/xml')
         if (dom.documentElement.nodeName === 'parsererror') {
           return dom.documentElement.childNodes[0].nodeValue
@@ -420,16 +413,17 @@ export default {
           : ':' + this.item.server_port
       }${this.item.requesturi}`
     },
-    form(vm) {
+    form() {
+      void this.headerActiveTab // なぜか消すと動かない
       try {
-        console.log(new URLSearchParams(vm.body))
-        return new URLSearchParams(vm.body).entries()
-      } catch {
+        return new URLSearchParams(this.body).entries()
+      } catch (e) {
         return {}
       }
     },
     disabled() {
-      return this.item.body_length !== 0
+      console.log(this.item.body_length)
+      return this.item.body_length === 0
     }
   },
   mounted() {
@@ -467,25 +461,31 @@ export default {
       link.click()
       document.body.removeChild(link)
     },
+    addAction(newValue) {
+      try {
+        newValue(this.bodyActionStack.reduce((x, y) => y(x), this.item.body))
+        this.bodyActionStack.push(newValue)
+      } catch {}
+    },
     bodyAction(e) {
       switch (e) {
         case 'decodeURI':
-          this.bodyActionStack.push(decodeURI)
+          this.addAction(decodeURI)
           break
         case 'decodeURIComponent':
-          this.bodyActionStack.push(decodeURIComponent)
+          this.addAction(decodeURIComponent)
           break
         case 'atob':
-          this.bodyActionStack.push(atob)
+          this.addAction(atob)
           break
         case 'encodeURI':
-          this.bodyActionStack.push(encodeURI)
+          this.addAction(encodeURI)
           break
         case 'encodeURIComponent':
-          this.bodyActionStack.push(encodeURIComponent)
+          this.addAction(encodeURIComponent)
           break
         case 'btoa':
-          this.bodyActionStack.push(btoa)
+          this.addAction(btoa)
           break
         case 'reset':
           this.bodyActionStack = [atob]
