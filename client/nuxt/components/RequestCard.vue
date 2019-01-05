@@ -8,7 +8,7 @@
           readonly
           class="url-text"
           type="text" />
-        <p 
+        <p
           class="control">
           <a
             v-clipboard:copy="url"
@@ -112,99 +112,83 @@
               :value="item.rawrequest"
               type="textarea"
               readonly/></div>
-          </div>
-          <div class="column">
-            <div class="info-header">
-              <h3>Body( {{ item.body_length || 0 }} bytes )</h3>
-              <b-field grouped>
-                <b-select
-                  :disabled="disabled"
-                  v-model="viewer"
-                  placeholder="Viewer"
-                  size="is-small">
-                  <optgroup label="Text">
-                    <option value="text">PlainText</option>
-                    <option value="json">JSON</option>
-                    <option value="form">Form</option>
-                    <option value="xml">XML</option>
-                  </optgroup>
-                  <optgroup label="Binary">
+            <div class="snippet">
+              <div class="info-header">
+                <h3>Snippet(β)</h3>
+                <b-field grouped>
+                  <b-select
+                    v-model="snippetSelected"
+                    size="is-small">
                     <option
-                      value="image"
-                      disabled>Image (WIP)</option>
-                    <option
-                      value="image"
-                      disabled>Hex (WIP)</option>
-                  </optgroup>
-                </b-select>
-                <b-field>
-                  <p class="control">
-                    <b-dropdown :disabled="disabled">
-                      <button
-                        slot="trigger"
-                        size="is-small"
-                        class="button is-primary">
-                        <span>Encode/Decode</span>
-                        <b-icon icon="menu-down"/>
-                      </button>
-                      <b-dropdown-item @click="bodyAction('decodeURI')">decodeURI</b-dropdown-item>
-                      <b-dropdown-item @click="bodyAction('decodeURIComponent')">decodeURIComponent</b-dropdown-item>
-                      <b-dropdown-item @click="bodyAction('atob')">decode Base64 (atob)</b-dropdown-item>
-                      <b-dropdown-item :separator="true"/>
-                      <b-dropdown-item @click="bodyAction('encodeURI')">encodeURI</b-dropdown-item>
-                      <b-dropdown-item @click="bodyAction('encodeURIComponent')">encodeURIComponent</b-dropdown-item>
-                      <b-dropdown-item @click="bodyAction('btoa')">encode Base64 (btoa)</b-dropdown-item>
-                      <b-dropdown-item :separator="true"/>
-                      <b-dropdown-item @click="bodyAction('reset')">Reset</b-dropdown-item>
-                    </b-dropdown>
-                  </p>
-                  <p class="control">
-                    <a
-                      v-clipboard:copy="body"
-                      v-clipboard:success="onCopyBodySuccess"
-                      v-clipboard:error="onCopyError"
-                      :disabled="disabled"
-                      target="_blank"
-                      class="button">
-                      <b-icon
-                        icon="clipboard"
-                        pack="fa" />
-                    </a>
-                  </p>
-                  <p class="control">
-                    <a
-                      :disabled="disabled"
-                      class="button"
-                      @click="download">
-                      <b-icon
-                        icon="cloud-download"
-                        custom-size="mdi-18px" />
-                    </a>
-                  </p>
+                      v-for="rule in snippetsRules"
+                      :value="rule"
+                      :key="rule">
+                      {{ rule }}
+                    </option>
+                  </b-select>
+                  <b-field>
+                    <p class="control">
+                      <a
+                        v-clipboard:copy="snippet"
+                        v-clipboard:success="onCopyBodySuccess"
+                        v-clipboard:error="onCopyError"
+                        :disabled="disabled"
+                        target="_blank"
+                        class="button">
+                        <b-icon
+                          icon="clipboard"
+                          pack="fa" />
+                      </a>
+                    </p>
+                    <p class="control">
+                      <a
+                        :disabled="disabled"
+                        class="button"
+                        @click="downloadSnippet">
+                        <b-icon
+                          icon="cloud-download"
+                          custom-size="mdi-18px" />
+                      </a>
+                    </p>
+                  </b-field>
                 </b-field>
-              </b-field>
-            </div>
-            <div v-if="viewer !== 'form'">
+              </div>
               <b-input
-                :value="body"
-                :disabled="disabled"
+                :value="snippet"
                 type="textarea"
                 readonly/>
             </div>
-            <div v-if="viewer === 'form'">
-              <table>
-                <tr
-                  v-for="[key,val] in Array.from(form)"
-                  :key="key">
-                  <th>{{ key }}</th>
-                  <td><b-input
-                    :value="val"
-                    readonly /></td>
-                </tr>
-              </table>
-            </div>
           </div>
-
+          <div class="column">
+            <BodyView
+              :size="item.body_length"
+              :body="item.body"
+              :mime="item.header['Content-Type'].join('')"
+              name="Body" />
+            <!-- todo: -->
+            <div class="info-header">
+              <h3>Form</h3>
+            </div>
+            <table>
+              <tr
+                v-for="key in Object.keys(item.form)"
+                :key="key">
+                <th>{{ key }}</th>
+                <td><b-input
+                  :value="item.form[key]"
+                  readonly /></td>
+              </tr>
+            </table>
+            <BodyView
+              v-for="mfile in item.multipartform"
+              :key="mfile.Filename"
+              :name="mfile.Filename"
+              :size="mfile.Size"
+              :body="mfile.Body"
+              :mime="mfile.Header['Content-Type'].join('')"
+              icon="file"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -293,9 +277,14 @@ a[disabled] {
     padding: 0.5em;
   }
   h3 {
-    margin-right: 1rem;
-    font-size: 1rem;
+    margin-right: 0.3rem;
+    font-size: 0.9rem;
     color: #666;
+    border-top: 2px solid #714dd2;
+    padding: 3px 10px;
+    margin-bottom: 0;
+    box-shadow: 0 0 3px #ccc;
+    height: 27px;
   }
   .info-header {
     margin-bottom: 0.3rem;
@@ -353,25 +342,15 @@ nav.tabs {
     color: #666;
   }
 }
+.snippet {
+  margin-top: 1em;
+}
 </style>
 <script>
-function getDefaultViewer(mime) {
-  if (mime === 'application/x-www-form-urlencoded') {
-    return 'form'
-  }
-  if (mime === 'application/json') {
-    return 'json'
-  }
-  if (mime.startsWith('image/')) {
-    return 'image'
-  }
-  if (mime === 'aplication/xml') {
-    return 'xml'
-  }
-  return 'text'
-}
+import BodyView from './BodyView'
 
 export default {
+  components: { BodyView },
   props: {
     item: {
       type: Object,
@@ -382,7 +361,8 @@ export default {
     return {
       headerActiveTab: 'table',
       bodyActionStack: [atob],
-      viewer: 'text'
+      viewer: 'text',
+      snippetSelected: 'cURL'
     }
   },
   computed: {
@@ -424,15 +404,26 @@ export default {
     disabled() {
       console.log(this.item.body_length)
       return this.item.body_length === 0
+    },
+    snippet() {
+      switch (this.snippetSelected) {
+        case 'cURL':
+          let headers = ''
+          for (const [k, vs] of Object.entries(this.item.header)) {
+            for (const v of vs) {
+              headers += `-H "${k}:${v}" `
+            }
+          }
+          return `curl -X ${this.item.method} ${headers} --data ${atob(
+            this.item.body
+          )} ${this.url}`
+        default:
+          return ''
+      }
+    },
+    snippetsRules() {
+      return ['cURL']
     }
-  },
-  mounted() {
-    this.viewer = getDefaultViewer(
-      (this.item.header &&
-        this.item.header['Content-Type'] &&
-        this.item.header['Content-Type'][0]) ||
-        ''
-    )
   },
   methods: {
     onCopySuccess(e) {
@@ -444,7 +435,7 @@ export default {
     },
     onCopyBodySuccess(e) {
       this.$toast.open({
-        message: 'Copied body data',
+        message: 'Copied data.',
         type: 'is-success',
         position: 'is-top-right'
       })
@@ -457,6 +448,15 @@ export default {
       let link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
       link.download = 'body.txt'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    },
+    downloadSnippet() {
+      var blob = new Blob([this.body], { type: 'text/plain' })
+      let link = document.createElement('a')
+      link.href = window.URL.createObjectURL(blob)
+      link.download = 'snippet.txt'
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
