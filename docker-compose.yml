@@ -41,3 +41,6 @@ services:
       - REQHACK_RANDOM
     links:
       - reqhack-server
+    volumes:
+      - /var/lib/waagent/${REQHACK_CERT}:/etc/nginx/ssl/cert.crt
+      - /var/lib/waagent/${REQHACK_PRIVATE}:/etc/nginx/ssl/cert.prv
