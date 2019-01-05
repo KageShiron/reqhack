@@ -51,6 +51,14 @@
                   target="_blank"
                   class="button"><img src="/icon/shodan.png"></a>
               </b-tooltip>
+            </p>
+            <p class="control">
+              <b-tooltip label="View in VirusTotal">
+                <a
+                  :href="'https://www.virustotal.com/#/ip-address/'+item.remoteaddr"
+                  target="_blank"
+                  class="button"><img src="/icon/virustotal.png"></a>
+              </b-tooltip>
           </p></div>
         </div>
 
