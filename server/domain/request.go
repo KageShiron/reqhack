@@ -105,7 +105,7 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 					return nil, err
 				}
 				if body, err := ioutil.ReadAll(file); err == nil {
-					var name = multipart.Part{Header: hdr.Header}.FormName()
+					name := (&multipart.Part{Header: hdr.Header}).FormName()
 					files = append(files, File{FileHeader: *hdr, Body: body, Name: name})
 				}
 			}
