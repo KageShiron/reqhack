@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/KageShiron/reqhack/server/domain"
-	"github.com/KageShiron/reqhack/server/usecase"
+	"github.com/KageShiron/reqhack/server/infrastracture"
 	"github.com/KageShiron/reqhack/server/utils"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -17,12 +17,12 @@ var NowFunc = time.Now
 
 // RequestController represents Requests' controller
 type RequestController struct {
-	Request usecase.RequestUsecase
-	Bin     usecase.BinUsecase
+	Request infrastracture.RequestRepository
+	Bin     infrastracture.BinRepository
 }
 
 // NewRequestController returns new RequestController
-func NewRequestController(req usecase.RequestUsecase, bin usecase.BinUsecase) *RequestController {
+func NewRequestController(req infrastracture.RequestRepository, bin infrastracture.BinRepository) *RequestController {
 	return &RequestController{
 		Request: req,
 		Bin:     bin,
@@ -34,12 +34,19 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 	println(r.URL.String())
 	vars := mux.Vars(r)
 	name, ok := vars["name"]
+	r.ParseForm()
+	secret := ""
+	if sf := r.Form["secret"]; sf != nil {
+		secret = sf[0]
+	}
+
 	if !ok {
 		utils.RestError(w, 400, "Invalid id")
 		return
 	}
 
-	bin, err := rc.Bin.Get(name)
+	println(secret)
+	bin, err := rc.Bin.Get(name, secret)
 	if err != nil {
 		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
 		return
@@ -82,7 +89,7 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 func (rc *RequestController) In(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["name"]
-	bin, err := rc.Bin.Get(name)
+	bin, err := rc.Bin.GetWithoutSecret(name)
 	if err != nil {
 		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
 		return

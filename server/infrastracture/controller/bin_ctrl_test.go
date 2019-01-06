@@ -1,7 +1,7 @@
 package controller
 
 import (
-	mocks2 "github.com/KageShiron/reqhack/server/usecase/mocks"
+	"github.com/KageShiron/reqhack/server/infrastracture/mocks"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -11,9 +11,9 @@ import (
 )
 
 func TestBinCreate(t *testing.T) {
-	bin := &mocks2.BinUsecase{}
-	bin.On("Add", "hoge").Return(nil, nil).Once()
-	bin.On("Add", "hoge2").Return(nil, errors.New("error")).Once()
+	bin := &mocks.BinRepository{}
+	bin.On("Add", "hoge", "").Return(nil, nil).Once()
+	bin.On("Add", "hoge2", "").Return(nil, errors.New("error")).Once()
 	con := NewBinController(bin)
 
 	rec := httptest.NewRecorder()

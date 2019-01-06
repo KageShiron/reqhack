@@ -16,8 +16,8 @@ func NewMysqlBinRepository(handler infrastracture.SQLHandler) infrastracture.Bin
 }
 
 // Add adds new Bin
-func (m *mysqlBinRepository) Add(name string) (*domain.Bin, error) {
-	res, err := m.Conn.Exec("INSERT INTO `bin` (name) VALUES (?)", name)
+func (m *mysqlBinRepository) Add(name string, secret string) (*domain.Bin, error) {
+	res, err := m.Conn.Exec("INSERT INTO `bin` (name,secret) VALUES (?,?)", name, secret)
 	if err != nil {
 		return nil, err
 	}
@@ -29,15 +29,22 @@ func (m *mysqlBinRepository) Add(name string) (*domain.Bin, error) {
 }
 
 // Get returns a bin
-func (m *mysqlBinRepository) Get(name string) (bin *domain.Bin, err error) {
+func (m *mysqlBinRepository) Get(name string, secret string) (bin *domain.Bin, err error) {
+	bin = &domain.Bin{}
+	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=? AND secret=?", name, secret).StructScan(bin)
+	return
+}
+
+// Get returns a bin
+func (m *mysqlBinRepository) GetWithoutSecret(name string) (bin *domain.Bin, err error) {
 	bin = &domain.Bin{}
 	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=?", name).StructScan(bin)
 	return
 }
 
 // GetById returns a bin by id
-func (m *mysqlBinRepository) GetByID(id int64) (bin *domain.Bin, err error) {
+func (m *mysqlBinRepository) GetByID(id int64, secret string) (bin *domain.Bin, err error) {
 	bin = &domain.Bin{}
-	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE id=?", id).StructScan(bin)
+	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE id=? AND secret=?", id, secret).StructScan(bin)
 	return
 }
