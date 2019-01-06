@@ -44,6 +44,17 @@
         <h2 class="title">最近の更新</h2>
         <ul>
           <li>
+            2019/1/6
+            <ul style="margin-left:2rem">
+              <li>https始めました</li>
+              <li>multipartformへの対応を大幅に強化(β)</li>
+              <li>curlの表示に部分対応(β) multipartformは次回以降の更新で対応</li>
+              <li>各所にコピーボタンを追加</li>
+              <li>デザインを調整</li>
+              <li>CSP対応</li>
+            </ul>
+          </li>
+          <li>
             2018/12/25
             <ul style="margin-left:2rem">
               <li>サーバーポートが間違っている不具合を修正</li>
@@ -57,7 +68,7 @@
       <div class="container">
         <h2 class="title">既知の不具合</h2>
         <ul>
-          <li>一時的にhttpsが使えません</li>
+          <li>?を含むURLにアクセスすると、Rawが壊れる</li>
         </ul>
       </div>
       <div class="container">

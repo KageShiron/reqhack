@@ -59,7 +59,6 @@ module.exports = {
     extend(config, ctx) {
       // Run ESLint on save
 
-      config.devtool = 'eval-source-map'
       if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
           enforce: 'pre',
