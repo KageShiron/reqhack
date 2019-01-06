@@ -63,7 +63,7 @@
         </div>
 
       </div>
-      <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }} <br> {{ $moment(item.time).fromNow() }}</time>
+      <time :datetime="item.time">{{ $moment(item.time).format("YYYY/MM/DD HH:mm:ss Z") }}<br>{{ ago }}</time>
     </header>
     <div class="content">
       <div class="container">
@@ -174,7 +174,8 @@
               :mime="item.header['Content-Type'] ? item.header['Content-Type'].join('') : ''"
               name="Body" />
             <!-- todo: -->
-            <div class="info-header">
+            <div
+              class="info-header">
               <h3>Form</h3>
             </div>
             <table>
@@ -370,7 +371,9 @@ export default {
       headerActiveTab: 'table',
       bodyActionStack: [atob],
       viewer: 'text',
-      snippetSelected: 'cURL'
+      snippetSelected: 'cURL',
+      tickTImer: undefined,
+      ago: '...'
     }
   },
   computed: {
@@ -432,6 +435,15 @@ export default {
     snippetsRules() {
       return ['cURL']
     }
+  },
+  mounted() {
+    this.ago = this.$moment(this.item.time).fromNow()
+    this.tickTimer = setInterval(() => {
+      this.ago = this.$moment(this.item.time).fromNow()
+    }, 60000)
+  },
+  destroyed() {
+    clearTimeout(this.tickTimer)
   },
   methods: {
     onCopySuccess(e) {
