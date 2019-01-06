@@ -224,7 +224,7 @@ export default {
         let blob = new Blob([this.body], { type: this.mime })
         link.href = window.URL.createObjectURL(blob)
       }
-      link.download = this.name
+      link.download = this.filename || this.name
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)

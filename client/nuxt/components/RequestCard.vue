@@ -172,31 +172,32 @@
               :mime="item.header['Content-Type'] ? item.header['Content-Type'].join('') : ''"
               name="Body" />
             <!-- todo: -->
-            <div
-              v-if="!disabled"
-              class="info-header">
-              <h3>Form</h3>
+            <div v-if="!disabled && Object.keys(item.form).length !== 0">
+              <div
+                class="info-header">
+                <h3>Form</h3>
+              </div>
+              <table>
+                <tr
+                  v-for="key in Object.keys(item.form)"
+                  :key="key">
+                  <th>{{ key }}</th>
+                  <td><b-input
+                    :value="item.form[key]"
+                    readonly /></td>
+                </tr>
+              </table>
+              <BodyView
+                v-for="mfile in item.multipartform"
+                :key="mfile.name"
+                :name="mfile.Name"
+                :filename="mfile.Filename"
+                :size="mfile.Size"
+                :body="mfile.Body"
+                :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
+                icon="file"
+              />
             </div>
-            <table>
-              <tr
-                v-for="key in Object.keys(item.form)"
-                :key="key">
-                <th>{{ key }}</th>
-                <td><b-input
-                  :value="item.form[key]"
-                  readonly /></td>
-              </tr>
-            </table>
-            <BodyView
-              v-for="mfile in item.multipartform"
-              :key="mfile.name"
-              :name="mfile.Name"
-              :filename="mfile.Filename"
-              :size="mfile.Size"
-              :body="mfile.Body"
-              :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
-              icon="file"
-            />
           </div>
         </div>
       </div>
@@ -211,7 +212,7 @@ a[disabled] {
   pointer-events: none;
 }
 .card {
-  margin-bottom: 1em;
+  margin: 0 1em 1em 1em;
 
   header {
     padding: 0.5em;
@@ -462,15 +463,6 @@ export default {
     },
     onCopyError(e) {
       this.$toast.error('Copied Failed...', { duration: 3000 })
-    },
-    download() {
-      var blob = new Blob([this.body], { type: 'text/plain' })
-      let link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = 'body.txt'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
     },
     downloadSnippet() {
       var blob = new Blob([this.body], { type: 'text/plain' })

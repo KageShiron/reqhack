@@ -13,7 +13,7 @@ console.log(`upstream reqhack {
   resolver 127.0.0.1;
   access_log /var/log/nginx/access.log;
   error_log /var/log/nginx/error.log;
-  add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' 'unsafe-eval'";
+  add_header Content-Security-Policy "default-src 'self'; script-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'";
 
   server {
       server_name ${host};
