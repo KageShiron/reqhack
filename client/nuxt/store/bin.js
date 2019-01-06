@@ -15,8 +15,10 @@ export const mutations = {
 }
 
 export const actions = {
-  async fetch_bin(context, name) {
-    const { data } = await axios.get(`/v1/${name}/items`)
-    context.commit('update_bin', { name, data: data.reverse() })
+  async fetch_bin(context, params) {
+    const { data } = await axios.get(
+      `/v1/${params.name}/items?secret=${params.secret}`
+    )
+    context.commit('update_bin', { nama: params.name, data: data.reverse() })
   }
 }

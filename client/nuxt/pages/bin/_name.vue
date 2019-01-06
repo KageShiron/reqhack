@@ -37,8 +37,11 @@ import moment from 'moment'
 import RequestCard from '../../components/RequestCard'
 export default {
   components: { RequestCard },
-  async fetch({ store, params }) {
-    await store.dispatch('bin/fetch_bin', params.name)
+  async fetch({ store, params,query }) {
+    await store.dispatch('bin/fetch_bin', {
+      name: params.name,
+      secret: query.secret
+    })
   },
   computed: {
     items() {
