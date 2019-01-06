@@ -140,7 +140,6 @@
                         v-clipboard:copy="snippet"
                         v-clipboard:success="onCopyBodySuccess"
                         v-clipboard:error="onCopyError"
-                        :disabled="disabled"
                         target="_blank"
                         class="button">
                         <b-icon
@@ -150,7 +149,6 @@
                     </p>
                     <p class="control">
                       <a
-                        :disabled="disabled"
                         class="button"
                         @click="downloadSnippet">
                         <b-icon
@@ -175,6 +173,7 @@
               name="Body" />
             <!-- todo: -->
             <div
+              v-if="!disabled"
               class="info-header">
               <h3>Form</h3>
             </div>
@@ -190,8 +189,9 @@
             </table>
             <BodyView
               v-for="mfile in item.multipartform"
-              :key="mfile.Filename"
-              :name="mfile.Filename"
+              :key="mfile.name"
+              :name="mfile.Name"
+              :filename="mfile.Filename"
               :size="mfile.Size"
               :body="mfile.Body"
               :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
@@ -425,9 +425,9 @@ export default {
               headers += `-H "${k}:${v}" `
             }
           }
-          return `curl -X ${this.item.method} ${headers} --data ${atob(
-            this.item.body
-          )} ${this.url}`
+          return `curl -X ${this.item.method} ${headers} ${
+            this.item.body_length === 0 ? '' : '--data'
+          } ${atob(this.item.body)} ${this.url}`
         default:
           return ''
       }

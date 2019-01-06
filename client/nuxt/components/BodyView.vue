@@ -1,7 +1,7 @@
 <template>
   <div class="bodyview">
     <div class="info-header">
-      <h3><i :class="'mdi mdi-' + icon"/>{{ name }}</h3>
+      <h3>{{ name }}</h3>
       <small>{{ size }} bytes</small>
       <b-field grouped>
         <b-select
@@ -76,6 +76,10 @@
         </b-field>
       </b-field>
     </div>
+    <div v-if="filename !== ''">
+      <i :class="'mdi mdi-' + icon"/>
+      {{ filename }}
+    </div>
 
     <div v-if="viewer !== 'form' && viewer !== 'image'">
       <b-input
@@ -135,6 +139,10 @@ export default {
       type: String,
       default: null
     },
+    filename: {
+      type: String,
+      default: null
+    },
     icon: {
       type: String,
       default: ''
@@ -179,7 +187,11 @@ export default {
       return this.size === 0
     },
     image() {
-      return `data:${this.mime};base64,${this.body}`
+      if (this.mime.startsWith('image/')) {
+        return `data:${this.mime};base64,${this.body}`
+      } else {
+        return `data:;base64,${this.body}`
+      }
     }
   },
   mounted() {
