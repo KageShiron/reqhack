@@ -16,7 +16,7 @@ import (
 
 // A Request represents a log record of HTTP Request.
 type Request struct {
-	ID            int64       `json:"-"`
+	ID            int64       `json:"id"`
 	Bin           *Bin        `json:"-"`
 	Time          time.Time   `json:"time"`
 	ServerPort    int         `json:"server_port"`

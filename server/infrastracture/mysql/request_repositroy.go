@@ -46,12 +46,13 @@ func (m *mysqlRequestRepository) Get(binID int64, id int64) (*domain.Request, er
 		return nil, err
 	}
 	err = json.Unmarshal(bytes.NewBufferString(res).Bytes(), req)
+	req.ID = id
 	return req, err
 }
 
 // GetRange returns Http Request Logs
 func (m *mysqlRequestRepository) GetRange(binID int64, start int64, length int64) ([]*domain.Request, error) {
-	rows, err := m.Conn.Query("SELECT (data) FROM `request` WHERE bin=? ORDER BY id LIMIT ?,?", binID, start, start+length-1)
+	rows, err := m.Conn.Query("SELECT id,data FROM `request` WHERE bin=? ORDER BY id LIMIT ?,?", binID, start, start+length-1)
 	if err != nil {
 		return nil, err
 	}
@@ -60,14 +61,16 @@ func (m *mysqlRequestRepository) GetRange(binID int64, start int64, length int64
 
 	reqs := []*domain.Request{}
 	for rows.Next() {
-		rows.Scan()
 		req := &domain.Request{}
+		var id int64
 		reqs = append(reqs, req)
-		err = rows.Scan(&res)
+		err = rows.Scan(&id, &res)
+
 		if err != nil {
 			return nil, err
 		}
 		err = json.Unmarshal(res, req)
+		req.ID = id
 		if err != nil {
 			return nil, err
 		}

@@ -1,5 +1,5 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
-  <div class="card" >
+  <div class="card" :id="`r${item.id}`" >
     <header>
       <span :class="'http-method ' + item.method">{{ item.method }}</span>
       <b-field class="url">
@@ -19,8 +19,17 @@
           <i class="fa fa-clipboard mdi-18px" /></a>
         </p>
       </b-field>
-      <span class="from-ip-title">From:</span>
+      <span class="from-ip-title">
+        <b-tooltip label="Copy permanent link">
+          <a
+            v-clipboard:copy="permanentLink"
+            v-clipboard:success="onCopySuccess"
+            v-clipboard:error="onCopyError"
+            target="_blank">#{{item.id}}</a>
+        </b-tooltip>
+      </span>
       <div class="from-ip">
+        From:
         <b-tooltip :label="'Client port :' + item.user_port">
           {{ item.remoteaddr }}
         </b-tooltip>
@@ -187,17 +196,17 @@
                     readonly /></td>
                 </tr>
               </table>
-              <BodyView
-                v-for="mfile in item.multipartform"
-                :key="mfile.name"
-                :name="mfile.Name"
-                :filename="mfile.Filename"
-                :size="mfile.Size"
-                :body="mfile.Body"
-                :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
-                icon="file"
-              />
             </div>
+            <BodyView
+            v-for="mfile in item.multipartform"
+            :key="mfile.name"
+            :name="mfile.Name"
+            :filename="mfile.Filename"
+            :size="mfile.Size"
+            :body="mfile.Body"
+            :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
+            icon="file"
+            />
           </div>
         </div>
       </div>
@@ -296,7 +305,6 @@ a[disabled] {
 
     .from-ip-title {
       align-self: center;
-      font-size: 13px;
     }
 
     time {
@@ -472,6 +480,9 @@ export default {
     },
     snippetsRules() {
       return ['cURL']
+    },
+    permanentLink() {
+      return `${location.protocol}//${location.host}${location.pathname}#r${this.item.id}`
     }
   },
   mounted() {
