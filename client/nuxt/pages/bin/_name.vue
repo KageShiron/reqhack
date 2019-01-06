@@ -62,6 +62,11 @@ export default {
       return this.$store.state.created
     }
   },
+  head() {
+    return {
+      title: this.$route.params.name + ' - reqhack'
+    }
+  },
   methods: {
     onCopySuccess(e) {
       this.$toast.open({

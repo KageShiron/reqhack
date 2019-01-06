@@ -1,7 +1,7 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
   <div class="card" >
     <header>
-      <span class="http-method">{{ item.method }}</span>
+      <span :class="'http-method ' + item.method">{{ item.method }}</span>
       <b-field class="url">
         <b-input
           :value="url"
@@ -227,8 +227,8 @@ a[disabled] {
     }
 
     .http-method {
-      background-color: #666;
-      color: white;
+      background-color: #fff;
+      color: black;
       border-radius: 3px;
       padding: 2px 5px;
       max-width: 100px;
@@ -236,6 +236,43 @@ a[disabled] {
       height: 24px;
       align-self: center;
       font-size: 13px;
+
+      &.GET {
+        background-color: #060;
+        color: white;
+      }
+      &.HEAD {
+        background-color: #660;
+        color: white;
+      }
+      &.POST {
+        background-color: #900;
+        color: white;
+      }
+      &.PUT {
+        background-color: #600;
+        color: white;
+      }
+      &.PATCH {
+        background-color: #606;
+        color: white;
+      }
+      &.DELETE {
+        background-color: #006;
+        color: white;
+      }
+      &.CONNECT {
+        background-color: #066;
+        color: white;
+      }
+      &.OPTIONS {
+        background-color: #666;
+        color: white;
+      }
+      &.TRACE {
+        background-color: #000;
+        color: white;
+      }
     }
 
     .url {
