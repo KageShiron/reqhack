@@ -171,7 +171,7 @@
             <BodyView
               :size="item.body_length"
               :body="item.body"
-              :mime="item.header['Content-Type'].join('')"
+              :mime="item.header['Content-Type'] ? item.header['Content-Type'].join('') : ''"
               name="Body" />
             <!-- todo: -->
             <div class="info-header">
@@ -193,7 +193,7 @@
               :name="mfile.Filename"
               :size="mfile.Size"
               :body="mfile.Body"
-              :mime="mfile.Header['Content-Type'].join('')"
+              :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
               icon="file"
             />
           </div>
