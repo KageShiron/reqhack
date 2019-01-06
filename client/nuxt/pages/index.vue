@@ -3,19 +3,21 @@
     <div class="field is-horizontal binurl">
       <span>{{ protocol }}//</span>
       <div class="control has-icons-right">
-        <input 
+        <input
           v-model="binname"
           class="input"
           type="text"
         >
       </div>
       <span>.{{ host }}</span>
-
     </div>
     <div class="field">
-      <button 
-        class="button is-primary is-right" 
-        @click="$store.dispatch('createBin', binname)">CreateBin</button>
+      <b-checkbox v-model="isPrivate">Private Bin</b-checkbox>
+    </div>
+    <div class="field">
+      <button
+        class="button is-primary is-right"
+        @click="$store.dispatch('createBin', {binname , isPrivate})">CreateBin</button>
     </div>
 
     <div v-if="created">
@@ -89,6 +91,11 @@ import Logo from '~/components/Logo.vue'
 export default {
   components: {
     Logo
+  },
+  data() {
+    return {
+      isPrivate: false
+    }
   },
   computed: {
     binname: {

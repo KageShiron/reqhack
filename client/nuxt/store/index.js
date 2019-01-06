@@ -17,8 +17,11 @@ export const mutations = {
 }
 
 export const actions = {
-  async createBin(context, name) {
-    const { data } = await axios.post(`/v1/${name}/create`)
+  async createBin(context, params) {
+    console.log(params)
+    const { data } = await axios.post(
+      `/v1/${params.binname}/create?isPrivate=${params.isPrivate}`
+    )
     if (data.success) {
       this.$router.push({ path: `/bin/${name}/` })
     } else {
