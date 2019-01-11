@@ -109,16 +109,16 @@
             </div>
             <div v-if="headerActiveTab === 'table'">
               <table class="http-header-table">
-                <tr
-                  v-for="(v,k) in item.header"
-                  :key="k">
-                  <td><a
-                    :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
-                    title="View in MDN"
-                    target="_blank"><img src="/icon/mdn.svg"></a></td>
-                  <th>{{ k }}</th>
-                  <td>{{ v.join("\n") }}</td>
-                </tr>
+                <template v-for="(vs,k) in item.header">
+                  <tr v-for="(v,index) in vs" :key="k">
+                    <td v-if="index===0" :rowspan="vs.length"><a
+                      :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
+                      title="View in MDN"
+                      target="_blank"><img src="/icon/mdn.svg"></a></td>
+                    <th v-if="index===0" :rowspan="vs.length">{{ k }}</th>
+                    <td>{{ v }}</td>
+                  </tr>
+                </template>
               </table>
             </div>
             <div v-if="headerActiveTab === 'json'"><b-input
@@ -187,14 +187,12 @@
                 <h3>Form</h3>
               </div>
               <table>
-                <tr
-                  v-for="key in Object.keys(item.form)"
-                  :key="key">
-                  <th>{{ key }}</th>
-                  <td><b-input
-                    :value="item.form[key]"
-                    readonly /></td>
-                </tr>
+                <template v-for="key in Object.keys(item.form)">
+                  <tr v-for="(v,index) in item.form[key]" :key="key">
+                    <th v-if="index===0" :rowspan="item.form[key].length">{{ k }}</th>
+                    <td><b-input :value="v" readonly /></td>
+                  </tr>
+                </template>
               </table>
             </div>
             <BodyView
