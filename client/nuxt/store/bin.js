@@ -19,6 +19,6 @@ export const actions = {
     const { data } = await axios.get(
       `/v1/${params.name}/items?secret=${params.secret}`
     )
-    context.commit('update_bin', { nama: params.name, data: data.reverse() })
+    context.commit('update_bin', { name: params.name, data: data.reverse() })
   }
 }
