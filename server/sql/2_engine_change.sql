@@ -1,1 +1,0 @@
-ALTER TABLE request ENGINE=MyISAM;
