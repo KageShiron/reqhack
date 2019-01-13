@@ -112,12 +112,18 @@
             <div v-if="headerActiveTab === 'table'">
               <table class="http-header-table">
                 <template v-for="(vs,k) in item.header">
-                  <tr v-for="(v,index) in vs" :key="k">
-                    <td v-if="index===0" :rowspan="vs.length"><a
-                      :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
-                      title="View in MDN"
-                      target="_blank"><img src="/icon/mdn.svg"></a></td>
-                    <th v-if="index===0" :rowspan="vs.length">{{ k }}</th>
+                  <tr 
+                    v-for="(v,index) in vs" 
+                    :key="k+'-'+index">
+                    <td 
+                      v-if="index===0" 
+                      :rowspan="vs.length"><a
+                        :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
+                        title="View in MDN"
+                        target="_blank"><img src="/icon/mdn.svg"></a></td>
+                    <th 
+                      v-if="index===0" 
+                      :rowspan="vs.length">{{ k }}</th>
                     <td>{{ v }}</td>
                   </tr>
                 </template>
@@ -190,9 +196,15 @@
               </div>
               <table>
                 <template v-for="key in Object.keys(item.form)">
-                  <tr v-for="(v,index) in item.form[key]" :key="key">
-                    <th v-if="index===0" :rowspan="item.form[key].length">{{ k }}</th>
-                    <td><b-input :value="v" readonly /></td>
+                  <tr 
+                    v-for="(v,index) in item.form[key]" 
+                    :key="key+'-'+index">
+                    <th 
+                      v-if="index===0" 
+                      :rowspan="item.form[key].length">{{ k }}</th>
+                    <td><b-input 
+                      :value="v" 
+                      readonly /></td>
                   </tr>
                 </template>
               </table>

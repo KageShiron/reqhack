@@ -96,6 +96,9 @@ export default {
   },
   data() {
     return {
+      binname: Math.random()
+        .toString(36)
+        .slice(-8),
       isPrivate: false
     }
   },

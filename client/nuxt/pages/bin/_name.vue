@@ -37,7 +37,7 @@ import moment from 'moment'
 import RequestCard from '../../components/RequestCard'
 export default {
   components: { RequestCard },
-  async fetch({ store, params,query }) {
+  async fetch({ store, params, query }) {
     await store.dispatch('bin/fetch_bin', {
       name: params.name,
       secret: query.secret
@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     items() {
-      return this.$store.state.bin.items[this.$route.params.name]
+      return this.$store.state.bin.items[this.$route.params.name].data
     },
     headerActiveTab: {
       get() {

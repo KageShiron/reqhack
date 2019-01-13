@@ -1,9 +1,6 @@
 import axios from 'axios'
 
 export const state = () => ({
-  binname: Math.random()
-    .toString(36)
-    .slice(-8),
   error: null
 })
 
@@ -15,15 +12,19 @@ export const mutations = {
 
 export const actions = {
   async createBin(context, params) {
-    try{ 
-      const { data } = await axios.post(
-        `/v1/${params.binname}/create?isPrivate=${params.isPrivate}`
-      )
-      if (data.success) {
-        this.$router.push({ path: `/bin/${name}/` })
-      }
-    } catch (e) {
-      context.commit('updateError', e.response.data.error)
-    }
+    axios
+      .post(`/v1/${params.binname}/create?isPrivate=${params.isPrivate}`)
+      .then(res => {
+        if (res.data.success) {
+          if (res.data.secret) {
+            context.commit('bin/update_bin', { name:params.binname , data : {secret: res.data.secret }})
+          }
+          this.$router.push({ path: `/bin/${params.binname}/` })
+        }
+      })
+      .catch(e => {
+        console.log(e)
+        context.commit('updateError', e.response.data.error)
+      })
   }
 }
