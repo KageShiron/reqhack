@@ -8,9 +8,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-  updateBinName(state, value) {
-    state.binname = value
-  },
   updateError(state, value) {
     state.error = value
   }
