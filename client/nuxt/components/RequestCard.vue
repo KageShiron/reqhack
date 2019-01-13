@@ -1,5 +1,7 @@
 <template xmlns:v-clipboard="http://www.w3.org/1999/xhtml">
-  <div class="card" :id="`r${item.id}`" >
+  <div 
+    :id="`r${item.id}`" 
+    class="card" >
     <header>
       <span :class="'http-method ' + item.method">{{ item.method }}</span>
       <b-field class="url">
@@ -25,7 +27,7 @@
             v-clipboard:copy="permanentLink"
             v-clipboard:success="onCopySuccess"
             v-clipboard:error="onCopyError"
-            target="_blank">#{{item.id}}</a>
+            target="_blank">#{{ item.id }}</a>
         </b-tooltip>
       </span>
       <div class="from-ip">
@@ -198,14 +200,14 @@
               </table>
             </div>
             <BodyView
-            v-for="mfile in item.multipartform"
-            :key="mfile.name"
-            :name="mfile.Name"
-            :filename="mfile.Filename"
-            :size="mfile.Size"
-            :body="mfile.Body"
-            :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
-            icon="file"
+              v-for="mfile in item.multipartform"
+              :key="mfile.name"
+              :name="mfile.Name"
+              :filename="mfile.Filename"
+              :size="mfile.Size"
+              :body="mfile.Body"
+              :mime="mfile.Header['Content-Type'] ? mfile.Header['Content-Type'].join('') : ''"
+              icon="file"
             />
           </div>
         </div>
@@ -482,7 +484,9 @@ export default {
       return ['cURL']
     },
     permanentLink() {
-      return `${location.protocol}//${location.host}${location.pathname}#r${this.item.id}`
+      return `${location.protocol}//${location.host}${location.pathname}#r${
+        this.item.id
+      }`
     }
   },
   mounted() {

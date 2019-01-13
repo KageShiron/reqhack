@@ -18,9 +18,11 @@
         @click="$store.dispatch('createBin', binname)">CreateBin</button>
     </div>
 
-    <div v-if="created">
-      {{ error }}
-    </div>
+    <b-message 
+      v-if="error" 
+      type="is-danger">
+      {{ error.message }}
+    </b-message>
     <div class="news">
       不具合、ご意見、ご感想などはSNSなどのDirect Messageでお願いします。
       プレゼンや卒論用にユースケースも集めたいので、こんな使い方しましたみたいなものもお待ちしております！
@@ -49,7 +51,7 @@
               <li>https始めました</li>
               <li>multipartformへの対応を大幅に強化(β)</li>
               <li>curlの表示に部分対応(β) multipartformは次回以降の更新で対応</li>
-              <li>各所にコピーボタンを追加</li>
+              N<li>各所にコピーボタンを追加</li>
               <li>デザインを調整</li>
               <li>CSP対応</li>
             </ul>
@@ -90,14 +92,16 @@ export default {
   components: {
     Logo
   },
+  data() {
+    return {
+      binname: Math.random()
+        .toString(36)
+        .slice(-8)
+    }
+  },
   computed: {
-    binname: {
-      get() {
-        return this.$store.state.binname
-      },
-      set(value) {
-        this.$store.commit('updateBinName', value)
-      }
+    error() {
+      return this.$store.state.error
     },
     host() {
       return location.host
