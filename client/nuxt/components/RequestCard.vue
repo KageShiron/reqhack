@@ -112,12 +112,18 @@
             <div v-if="headerActiveTab === 'table'">
               <table class="http-header-table">
                 <template v-for="(vs,k) in item.header">
-                  <tr v-for="(v,index) in vs" :key="k">
-                    <td v-if="index===0" :rowspan="vs.length"><a
-                      :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
-                      title="View in MDN"
-                      target="_blank"><img src="/icon/mdn.svg"></a></td>
-                    <th v-if="index===0" :rowspan="vs.length">{{ k }}</th>
+                  <tr 
+                    v-for="(v,index) in vs" 
+                    :key="k+'-'+index">
+                    <td 
+                      v-if="index===0" 
+                      :rowspan="vs.length"><a
+                        :href="'https://developer.mozilla.org/docs/Web/HTTP/Headers/' + k"
+                        title="View in MDN"
+                        target="_blank"><img src="/icon/mdn.svg"></a></td>
+                    <th 
+                      v-if="index===0" 
+                      :rowspan="vs.length">{{ k }}</th>
                     <td>{{ v }}</td>
                   </tr>
                 </template>
@@ -151,6 +157,7 @@
                         v-clipboard:copy="snippet"
                         v-clipboard:success="onCopyBodySuccess"
                         v-clipboard:error="onCopyError"
+                        v-if="snippetSelected !== 'Select'"
                         target="_blank"
                         class="button">
                         <b-icon
@@ -160,6 +167,7 @@
                     </p>
                     <p class="control">
                       <a
+                        v-if="snippetSelected !== 'Select'"
                         class="button"
                         @click="downloadSnippet">
                         <b-icon
@@ -171,6 +179,7 @@
                 </b-field>
               </div>
               <b-input
+                v-if="snippetSelected !== 'Select'"
                 :value="snippet"
                 type="textarea"
                 readonly/>
@@ -190,9 +199,15 @@
               </div>
               <table>
                 <template v-for="key in Object.keys(item.form)">
-                  <tr v-for="(v,index) in item.form[key]" :key="key">
-                    <th v-if="index===0" :rowspan="item.form[key].length">{{ k }}</th>
-                    <td><b-input :value="v" readonly /></td>
+                  <tr 
+                    v-for="(v,index) in item.form[key]" 
+                    :key="key+'-'+index">
+                    <th 
+                      v-if="index===0" 
+                      :rowspan="item.form[key].length">{{ k }}</th>
+                    <td><b-input 
+                      :value="v" 
+                      readonly /></td>
                   </tr>
                 </template>
               </table>
@@ -417,7 +432,7 @@ export default {
       headerActiveTab: 'table',
       bodyActionStack: [atob],
       viewer: 'text',
-      snippetSelected: 'cURL',
+      snippetSelected: 'Select',
       tickTImer: undefined,
       ago: '...'
     }
@@ -447,7 +462,7 @@ export default {
         (this.item.scheme === 'https' && this.item.server_port === 443)
           ? ''
           : ':' + this.item.server_port
-        }${this.item.requesturi}`
+      }${this.item.requesturi}`
     },
     form() {
       void this.headerActiveTab // なぜか消すと動かない
@@ -470,21 +485,23 @@ export default {
               headers += `-H "${k}:${v}" `
             }
           }
-          if(this.item.body_length === 0)
-          {
+          if (this.item.body_length === 0) {
             return `curl -X ${this.item.method} ${headers}`
-          }else {
-            const body = `curl -sSL ${location.protocol}//${location.host}/v1/${this.$route.params.name}/items/${this.item.id}/body`;
-            return `${body} | curl -X ${this.item.method} ${headers} --data-binary @- ${this.url}`
+          } else {
+            const body = `curl -sSL ${location.protocol}//${location.host}/v1/${
+              this.$route.params.name
+            }/items/${this.item.id}/body`
+            return `${body} | curl -X ${
+              this.item.method
+            } ${headers} --data-binary @- ${this.url}`
           }
-
 
         default:
           return ''
       }
     },
     snippetsRules() {
-      return ['cURL']
+      return ['Select', 'cURL']
     },
     permanentLink() {
       return `${location.protocol}//${location.host}${location.pathname}#r${
@@ -520,7 +537,7 @@ export default {
       this.$toast.error('Copied Failed...', { duration: 3000 })
     },
     downloadSnippet() {
-      var blob = new Blob([this.body], { type: 'text/plain' })
+      var blob = new Blob([this.snippet], { type: 'text/plain' })
       let link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
       link.download = 'snippet.txt'
