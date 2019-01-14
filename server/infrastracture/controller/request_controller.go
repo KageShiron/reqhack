@@ -96,3 +96,35 @@ func (rc *RequestController) In(w http.ResponseWriter, r *http.Request) {
 	rc.Request.Add(req)
 	utils.RestSucceedObject(w, 200, req)
 }
+
+// Body is a handler of (GET) /v1/{name}/items/{num}/body
+func (rc *RequestController) Body(w http.ResponseWriter, r *http.Request) {
+	println(r.URL.String())
+	vars := mux.Vars(r)
+	name, ok := vars["name"]
+	if !ok {
+		utils.RestError(w, 400, "Invalid id")
+		return
+	}
+
+	bin, err := rc.Bin.Get(name)
+	if err != nil {
+		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
+		return
+	}
+
+	num, ok := vars["num"]
+	index, err := strconv.ParseInt(num, 10, 64)
+	if err != nil {
+		utils.RestError(w, 400, "Invalid index")
+		return
+	}
+
+	res, err := rc.Request.Get(bin.ID, index)
+	if err != nil {
+		utils.RestError(w, 404, fmt.Sprintf(`Log "#%d" not found`, index))
+		return
+	}
+
+	utils.RestBinary(w, 200, res.Body)
+}

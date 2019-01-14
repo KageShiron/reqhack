@@ -441,14 +441,13 @@ export default {
 
       return res
     },
-
     url() {
       return `${this.item.scheme}://${this.item.host}${
         (this.item.scheme === 'http' && this.item.server_port === 80) ||
         (this.item.scheme === 'https' && this.item.server_port === 443)
           ? ''
           : ':' + this.item.server_port
-      }${this.item.requesturi}`
+        }${this.item.requesturi}`
     },
     form() {
       void this.headerActiveTab // なぜか消すと動かない
@@ -471,9 +470,15 @@ export default {
               headers += `-H "${k}:${v}" `
             }
           }
-          return `curl -X ${this.item.method} ${headers} ${
-            this.item.body_length === 0 ? '' : '--data'
-          } ${atob(this.item.body)} ${this.url}`
+          if(this.item.body_length === 0)
+          {
+            return `curl -X ${this.item.method} ${headers}`
+          }else {
+            const body = `curl -sSL ${location.protocol}//${location.host}/v1/${this.$route.params.name}/items/${this.item.id}/body`;
+            return `${body} | curl -X ${this.item.method} ${headers} --data-binary @- ${this.url}`
+          }
+
+
         default:
           return ''
       }

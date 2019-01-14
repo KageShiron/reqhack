@@ -29,3 +29,8 @@ func RestSucceedObject(w http.ResponseWriter, code int, obj interface{}) error {
 	e := map[string]interface{}{"result": obj, "code": code}
 	return ren.JSON(w, code, map[string]interface{}{"success": e})
 }
+
+// RestBinary writes data to w
+func RestBinary(w http.ResponseWriter, code int, bin []byte) error {
+	return ren.Data(w, code, bin)
+}

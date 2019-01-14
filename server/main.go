@@ -19,6 +19,7 @@ func main() {
 	router.Methods("POST").Path("/v1/{name}/{_:create/?}").HandlerFunc(bc.Create)
 	router.Methods("GET").Path("/v1/{name}/items").HandlerFunc(rc.Items)
 	router.Methods("GET").Path("/v1/{name}/items/{num:[0-9]*(?:\\/)?}").HandlerFunc(rc.Items)
+	router.Methods("GET").Path("/v1/{name}/items/{num:[0-9]+}/body").HandlerFunc(rc.Body)
 	router.Path("/v1/{name}/{_:in(?:/.*|$)}").HandlerFunc(rc.In)
 	srv := &http.Server{
 		Addr:    ":8081",
