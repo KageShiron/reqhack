@@ -96,9 +96,12 @@ export default {
   },
   data() {
     return {
+<<<<<<< HEAD
       binname: Math.random()
         .toString(36)
         .slice(-8),
+=======
+>>>>>>> 94bdb1605975256d4634df4e4eb068db4ec9fc83
       isPrivate: false
     }
   },
