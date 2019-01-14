@@ -5,7 +5,8 @@ import (
 	"github.com/KageShiron/reqhack/server/infrastracture"
 	"github.com/KageShiron/reqhack/server/utils"
 	"github.com/gorilla/mux"
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"net/http"
 )
 
@@ -20,11 +21,13 @@ func NewBinController(bin infrastracture.BinRepository) *BinController {
 }
 
 var rs1Letters = []rune("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var rs1max = big.NewInt(int64(len(rs1Letters)))
 
 func randString(n int) string {
 	b := make([]rune, n)
 	for i := range b {
-		b[i] = rs1Letters[rand.Intn(len(rs1Letters))]
+		num,_ := rand.Int(rand.Reader,rs1max)
+		b[i] = rs1Letters[num.Int64()]
 	}
 	return string(b)
 }

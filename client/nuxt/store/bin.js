@@ -38,10 +38,9 @@ export const actions = {
     const { data } = await axios.get(
       `/v1/${params.name}/items?secret=${secret}`
     )
-    console.log(data)
     context.commit('update_bin', {
       name: params.name,
-      data: { data: data.reverse() }
+      data: { data: data.reverse(), secret: secret }
     })
   }
 }
