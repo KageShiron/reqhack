@@ -157,6 +157,7 @@
                         v-clipboard:copy="snippet"
                         v-clipboard:success="onCopyBodySuccess"
                         v-clipboard:error="onCopyError"
+                        v-if="snippetSelected !== 'Select'"
                         target="_blank"
                         class="button">
                         <b-icon
@@ -166,6 +167,7 @@
                     </p>
                     <p class="control">
                       <a
+                        v-if="snippetSelected !== 'Select'"
                         class="button"
                         @click="downloadSnippet">
                         <b-icon
@@ -177,6 +179,7 @@
                 </b-field>
               </div>
               <b-input
+                v-if="snippetSelected !== 'Select'"
                 :value="snippet"
                 type="textarea"
                 readonly/>
@@ -429,7 +432,7 @@ export default {
       headerActiveTab: 'table',
       bodyActionStack: [atob],
       viewer: 'text',
-      snippetSelected: 'cURL',
+      snippetSelected: 'Select',
       tickTImer: undefined,
       ago: '...'
     }
@@ -453,7 +456,6 @@ export default {
 
       return res
     },
-
     url() {
       return `${this.item.scheme}://${this.item.host}${
         (this.item.scheme === 'http' && this.item.server_port === 80) ||
@@ -483,15 +485,23 @@ export default {
               headers += `-H "${k}:${v}" `
             }
           }
-          return `curl -X ${this.item.method} ${headers} ${
-            this.item.body_length === 0 ? '' : '--data'
-          } ${atob(this.item.body)} ${this.url}`
+          if (this.item.body_length === 0) {
+            return `curl -X ${this.item.method} ${headers}`
+          } else {
+            const body = `curl -sSL ${location.protocol}//${location.host}/v1/${
+              this.$route.params.name
+            }/items/${this.item.id}/body`
+            return `${body} | curl -X ${
+              this.item.method
+            } ${headers} --data-binary @- ${this.url}`
+          }
+
         default:
           return ''
       }
     },
     snippetsRules() {
-      return ['cURL']
+      return ['Select', 'cURL']
     },
     permanentLink() {
       return `${location.protocol}//${location.host}${location.pathname}#r${
@@ -527,7 +537,7 @@ export default {
       this.$toast.error('Copied Failed...', { duration: 3000 })
     },
     downloadSnippet() {
-      var blob = new Blob([this.body], { type: 'text/plain' })
+      var blob = new Blob([this.snippet], { type: 'text/plain' })
       let link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
       link.download = 'snippet.txt'
