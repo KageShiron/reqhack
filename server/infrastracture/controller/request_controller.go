@@ -114,7 +114,13 @@ func (rc *RequestController) Body(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bin, err := rc.Bin.Get(name)
+	r.ParseForm()
+	secret := ""
+	if sf := r.Form["secret"]; sf != nil {
+		secret = sf[0]
+	}
+
+	bin, err := rc.Bin.Get(name,secret)
 	if err != nil {
 		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
 		return

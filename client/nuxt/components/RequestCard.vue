@@ -425,6 +425,10 @@ export default {
     item: {
       type: Object,
       default: null
+    },
+    secret: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -482,7 +486,7 @@ export default {
           let headers = ''
           for (const [k, vs] of Object.entries(this.item.header)) {
             for (const v of vs) {
-              headers += `-H "${k}:${v}" `
+              if (k !== 'Content-Length' && k !== 'Connection') headers += `-H "${k}:${v}" `
             }
           }
           if (this.item.body_length === 0) {
@@ -491,7 +495,8 @@ export default {
             const body = `curl -sSL ${location.protocol}//${location.host}/v1/${
               this.$route.params.name
             }/items/${this.item.id}/body`
-            return `${body} | curl -X ${
+            const sec = this.secret && `?secret=${this.secret}`
+            return `${body}${sec || ''} | curl -X ${
               this.item.method
             } ${headers} --data-binary @- ${this.url}`
           }

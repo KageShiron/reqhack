@@ -41,6 +41,7 @@
           <RequestCard 
             v-for="item in items"
             :key="item.id"
+            :secret="secret"
             :item="item"/>
         </div>
       </div>
