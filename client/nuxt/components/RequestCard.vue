@@ -486,21 +486,21 @@ export default {
           let headers = ''
           for (const [k, vs] of Object.entries(this.item.header)) {
             for (const v of vs) {
-              if (k !== 'Content-Length' && k !== 'Connection') headers += `-H "${k}:${v}" `
+              if (k !== 'Content-Length' && k !== 'Connection')
+                headers += `-H "${k}:${v}" `
             }
           }
-          if (this.item.body_length === 0) {
-            return `curl -X ${this.item.method} ${headers}`
-          } else {
-            const body = `curl -sSL ${location.protocol}//${location.host}/v1/${
-              this.$route.params.name
-            }/items/${this.item.id}/body`
-            const sec = this.secret && `?secret=${this.secret}`
-            return `${body}${sec || ''} | curl -X ${
-              this.item.method
-            } ${headers} --data-binary @- ${this.url}`
-          }
 
+          if (this.item.body_length === 0) {
+            return `curl -X ${this.item.method} ${headers} ${this.url}`
+          }
+          const body = `curl -sSL ${location.protocol}//${location.host}/v1/${
+            this.$route.params.name
+          }/items/${this.item.id}/body`
+          const sec = this.secret && `?secret=${this.secret}`
+          return `${body}${sec || ''} | curl -X ${
+            this.item.method
+          } ${headers} --data-binary @- ${this.url}`
         default:
           return ''
       }
