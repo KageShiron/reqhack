@@ -47,14 +47,15 @@
       <div class="container">
         <h2 class="title">最近の更新</h2>
         <ul>
-          <li>2019/1/28</li>
-          <ul>
-            <li>閲覧にトークンが必要なprivate mode</li>
-            <li>Snippetを初期で折りたたむ</li>
-            <li>メッセージ本文がない場合のUIを修正</li>
-            <li>同一のヘッダ名が複数ある場合のテーブル表示の挙動を訂正</li>
-            <li>IDがBinごとの連番になっていないバグを修正</li>
-          </ul>
+          <li>2019/1/28
+            <ul style="margin-left:2rem">
+              <li>閲覧にトークンが必要なprivate mode</li>
+              <li>Snippetを初期で折りたたむ</li>
+              <li>メッセージ本文がない場合のUIを修正</li>
+              <li>同一のヘッダ名が複数ある場合のテーブル表示の挙動を訂正</li>
+              <li>IDがBinごとの連番になっていないバグを修正</li>
+            </ul>
+          </li>
           <li>
             2019/1/6
             <ul style="margin-left:2rem">
