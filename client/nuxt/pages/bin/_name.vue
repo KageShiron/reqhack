@@ -3,7 +3,22 @@
     <section class="hero">
       <div class="hero-body">
         <div class="container">
-          <h1 class="title"><span style="font-size:80%;color:#666;">Inspect</span> {{ $route.params.name }}</h1>
+          <h1 class="title"><span style="font-size:80%;color:#666;">Inspect</span>
+            {{ $route.params.name }}
+            <b-tooltip
+              v-if="secret"
+              :label="'secret token:\n'+secret">
+              <a
+                v-clipboard:copy="secret"
+                v-clipboard:success="onCopySuccess"
+                v-clipboard:error="onCopyError"
+                target="_blank">
+                <b-icon
+                  icon="lock"
+                  custom-size="mdi-18px"/>
+              </a>
+            </b-tooltip>
+          </h1>
           <h2 class="subtitle">
             Logger URL: <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
 
@@ -26,6 +41,7 @@
           <RequestCard 
             v-for="item in items"
             :key="item.id"
+            :secret="secret"
             :item="item"/>
         </div>
       </div>
@@ -37,12 +53,22 @@ import moment from 'moment'
 import RequestCard from '../../components/RequestCard'
 export default {
   components: { RequestCard },
-  async fetch({ store, params }) {
-    await store.dispatch('bin/fetch_bin', params.name)
+  async fetch({ store, params, query }) {
+    await store.dispatch('bin/fetch_bin', {
+      name: params.name,
+      secret: query.secret
+    })
   },
   computed: {
     items() {
-      return this.$store.state.bin.items[this.$route.params.name]
+      return this.$store.state.bin.items[this.$route.params.name].data
+    },
+    secret() {
+      const name = this.$route.params.name
+      return (
+        this.$store.state.bin.items[name] &&
+        this.$store.state.bin.items[name].secret
+      )
     },
     headerActiveTab: {
       get() {

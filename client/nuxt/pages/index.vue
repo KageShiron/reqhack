@@ -3,19 +3,21 @@
     <div class="field is-horizontal binurl">
       <span>{{ protocol }}//</span>
       <div class="control has-icons-right">
-        <input 
+        <input
           v-model="binname"
           class="input"
           type="text"
         >
       </div>
       <span>.{{ host }}</span>
-
     </div>
     <div class="field">
-      <button 
-        class="button is-primary is-right" 
-        @click="$store.dispatch('createBin', binname)">CreateBin</button>
+      <b-checkbox v-model="isPrivate">Private Bin</b-checkbox>
+    </div>
+    <div class="field">
+      <button
+        class="button is-primary is-right"
+        @click="$store.dispatch('createBin', {binname , isPrivate})">CreateBin</button>
     </div>
 
     <b-message 
@@ -45,6 +47,15 @@
       <div class="container">
         <h2 class="title">最近の更新</h2>
         <ul>
+          <li>2019/1/28
+            <ul style="margin-left:2rem">
+              <li>閲覧にトークンが必要なprivate mode</li>
+              <li>Snippetを初期で折りたたむ</li>
+              <li>メッセージ本文がない場合のUIを修正</li>
+              <li>同一のヘッダ名が複数ある場合のテーブル表示の挙動を訂正</li>
+              <li>IDがBinごとの連番になっていないバグを修正</li>
+            </ul>
+          </li>
           <li>
             2019/1/6
             <ul style="margin-left:2rem">
@@ -96,7 +107,8 @@ export default {
     return {
       binname: Math.random()
         .toString(36)
-        .slice(-8)
+        .slice(-8),
+      isPrivate: false
     }
   },
   computed: {

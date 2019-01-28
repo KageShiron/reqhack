@@ -16,5 +16,5 @@ RUN go install github.com/KageShiron/reqhack/server/
 COPY autodelete/ /etc/cron.daily/
 RUN chmod 755 /etc/cron.daily/autodelete.sh
 
-CMD entry.sh
 EXPOSE 8081
+CMD ./wait-for-it.sh database:3306 -- ./entry.sh

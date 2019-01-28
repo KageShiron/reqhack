@@ -18,10 +18,19 @@ func RestError(w http.ResponseWriter, code int, message string) error {
 	return ren.JSON(w, code, map[string]simpleResponse{"error": e})
 }
 
+// RestSucceedWithObject returns success json and object
+func RestSucceedWithObject(w http.ResponseWriter, code int, message string, object map[string]interface{}) error {
+	e := simpleResponse{Message: message, Code: code}
+	if object == nil {
+		object = map[string]interface{}{}
+	}
+	object["success"] = e
+	return ren.JSON(w, code, object)
+}
+
 // RestSucceed returns success json
 func RestSucceed(w http.ResponseWriter, code int, message string) error {
-	e := simpleResponse{Message: message, Code: code}
-	return ren.JSON(w, code, map[string]simpleResponse{"success": e})
+	return RestSucceedWithObject(w, code, message, nil)
 }
 
 // RestSucceedObject returns success json with a result object

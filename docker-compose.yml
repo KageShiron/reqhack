@@ -15,7 +15,6 @@ services:
       - REQHACK_BASEHOST
       - DATA_SOURCE_NAME=root:${MYSQL_ROOT_PASSWORD}@tcp(database:3306)/reqhack
       - REQHACK_RANDOM
-    entrypoint: ["./wait-for-it.sh","database:3306","--","./entry.sh"]
 
   database:
     image: mysql

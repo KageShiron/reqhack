@@ -12,7 +12,7 @@ type BinRepository struct {
 }
 
 // Add provides a mock function with given fields: name
-func (_m *BinRepository) Add(name string) (*domain.Bin, error) {
+func (_m *BinRepository) Add(name string, secret string) (*domain.Bin, error) {
 	ret := _m.Called(name)
 
 	var r0 *domain.Bin
@@ -35,7 +35,7 @@ func (_m *BinRepository) Add(name string) (*domain.Bin, error) {
 }
 
 // Get provides a mock function with given fields: name
-func (_m *BinRepository) Get(name string) (*domain.Bin, error) {
+func (_m *BinRepository) Get(name string, secret string) (*domain.Bin, error) {
 	ret := _m.Called(name)
 
 	var r0 *domain.Bin
@@ -58,7 +58,7 @@ func (_m *BinRepository) Get(name string) (*domain.Bin, error) {
 }
 
 // GetByID provides a mock function with given fields: id
-func (_m *BinRepository) GetByID(id int64) (*domain.Bin, error) {
+func (_m *BinRepository) GetByID(id int64, secret string) (*domain.Bin, error) {
 	ret := _m.Called(id)
 
 	var r0 *domain.Bin
