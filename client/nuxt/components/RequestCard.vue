@@ -113,7 +113,7 @@
               <table class="http-header-table">
                 <template v-for="(vs,k) in item.header">
                   <tr 
-                    v-for="(v,index) in vs" 
+                    v-for="(v,index) in vs"
                     :key="k+'-'+index">
                     <td 
                       v-if="index===0" 
@@ -200,7 +200,7 @@
               <table>
                 <template v-for="key in Object.keys(item.form)">
                   <tr 
-                    v-for="(v,index) in item.form[key]" 
+                    v-for="(v,index) in item.form[key]"
                     :key="key+'-'+index">
                     <th 
                       v-if="index===0" 

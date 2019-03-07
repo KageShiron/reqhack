@@ -26,8 +26,6 @@
       {{ error.message }}
     </b-message>
     <div class="news">
-      不具合、ご意見、ご感想などはSNSなどのDirect Messageでお願いします。
-      プレゼンや卒論用にユースケースも集めたいので、こんな使い方しましたみたいなものもお待ちしております！
       <div class="container">
         <h2 class="title">使い方</h2>
         <ol>
@@ -39,14 +37,17 @@
       <div class="container">
         <h2 class="title">注意点</h2>
         <ul>
-          <li>現在はbinの閲覧制限が無いので、機密情報を残さないことをおすすめします。削除対応は@KageShironまで直接ご連絡を。</li>
-          <li>データは2日ぐらいで消えるはずですが、うまく消えなかったり、事故って突然DBが消しとぶ場合があります。</li>
           <li>開発用サーバーなので、予告なく止まったりぶっ壊れたりします</li>
         </ul>
       </div>
       <div class="container">
         <h2 class="title">最近の更新</h2>
         <ul>
+          <li>2019/3/7
+            <ul style="margin-left:2rem">
+              <li>フィルタ機能を追加</li>
+            </ul>
+          </li>
           <li>2019/1/28
             <ul style="margin-left:2rem">
               <li>閲覧にトークンが必要なprivate mode</li>
@@ -87,9 +88,8 @@
       <div class="container">
         <h2 class="title">近日対応予定</h2>
         <ul>
-          <li>既知の不具合の修正</li>
-          <li>curlでコピー</li>
-          <li>Multipart Form関連の実装</li>
+          <li>スニペットの種類の拡充</li>
+          <li>OSS化</li>
         </ul>
       </div>
     </div>

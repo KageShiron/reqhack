@@ -20,16 +20,22 @@
             </b-tooltip>
           </h1>
           <h2 class="subtitle">
-            Logger URL: <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
+            <div class="logger">
+              Logger URL: <a :href="`${protocol}//${$route.params.name}.${host}/`">{{ protocol }}//{{ $route.params.name }}.{{ host }}</a>
 
-            <a
-              v-clipboard:copy="`${protocol}//${$route.params.name}.${host}/`"
-              v-clipboard:success="onCopySuccess"
-              v-clipboard:error="onCopyError"
-              target="_blank"
-              class="button">
-              <i class="fa fa-clipboard" />
-            </a>
+              <a
+                v-clipboard:copy="`${protocol}//${$route.params.name}.${host}/`"
+                v-clipboard:success="onCopySuccess"
+                v-clipboard:error="onCopyError"
+                target="_blank"
+                class="button">
+                <i class="fa fa-clipboard" />
+              </a>
+            </div>
+            <b-input
+              v-model="filter"
+              placeholder="Filter"
+              type="text" />
           </h2>
         </div>
       </div>
@@ -51,6 +57,7 @@
 <script>
 import moment from 'moment'
 import RequestCard from '../../components/RequestCard'
+
 export default {
   components: { RequestCard },
   async fetch({ store, params, query }) {
@@ -59,9 +66,28 @@ export default {
       secret: query.secret
     })
   },
+  data() {
+    return { filter: '' }
+  },
   computed: {
     items() {
-      return this.$store.state.bin.items[this.$route.params.name].data
+      const checkFilter = item => {
+        if (item == null || item === '') return true
+        if (
+          atob(item.body).includes(this.filter) ||
+          item.rawrequest.includes(this.filter) ||
+          item.remoteaddr.includes(this.filter) ||
+          this.$moment(item.time)
+            .format('YYYY/MM/DD HH:mm:ss Z')
+            .includes(this.filter)
+        ) {
+          return true
+        }
+        return false
+      }
+      return this.$store.state.bin.items[this.$route.params.name].data.filter(
+        checkFilter
+      )
     },
     secret() {
       const name = this.$route.params.name
@@ -117,5 +143,11 @@ export default {
 }
 .button {
   vertical-align: baseline;
+}
+h2.subtitle {
+  display: flex;
+  .logger {
+    flex-grow: 1;
+  }
 }
 </style>
