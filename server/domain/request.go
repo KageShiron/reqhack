@@ -88,9 +88,9 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 	r.Header.Del(realRequest)
 	if ip != "" {
 		pos := strings.LastIndex(strings.ToLower(r.Host), baseHost)
-		prefix = "/v1/" + r.Host[:(pos-1)] + "/in"
-		if !strings.HasPrefix(r.RequestURI, strings.ToLower(prefix)) {
-			log.Errorf(`Unexpected Prefix "%s" (expected: %s)`, r.RequestURI, strings.ToLower(prefix))
+		prefix = "/v1/" + strings.ToLower(r.Host[:(pos-1)]) + "/in"
+		if !strings.HasPrefix(r.RequestURI, prefix) {
+			log.Errorf(`Unexpected Prefix "%s" (expected: %s)`, r.RequestURI, prefix)
 			return nil, errors.New("Unexpected Prefix")
 		}
 	} else {
