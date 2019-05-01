@@ -11,7 +11,10 @@ console.log(`upstream reqhack {
   }
 
   resolver 127.0.0.1;
-  access_log /var/log/nginx/access.log;
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$host" "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for" "$request_body"';
+  access_log /var/log/nginx/access.log main;
   error_log /var/log/nginx/error.log;
   add_header Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'";
 
