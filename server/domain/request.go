@@ -3,8 +3,9 @@ package domain
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -89,8 +90,8 @@ func NewRequest(time time.Time, r *http.Request) (req *Request, err error) {
 		pos := strings.LastIndex(r.Host, baseHost)
 		prefix = "/v1/" + r.Host[:(pos-1)] + "/in"
 		if !strings.HasPrefix(r.RequestURI, prefix) {
-			log.Fatal("Bad Prefix : " + r.RequestURI)
-
+			log.Errorf(`Unexpected Prefix "%s" (expected: %s)`, r.RequestURI, prefix)
+			return nil, errors.New("Unexpected Prefix")
 		}
 	} else {
 		ip = r.RemoteAddr

@@ -7,6 +7,7 @@ import (
 	"github.com/KageShiron/reqhack/server/infrastracture"
 	"github.com/KageShiron/reqhack/server/utils"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 	"time"
@@ -31,7 +32,6 @@ func NewRequestController(req infrastracture.RequestRepository, bin infrastractu
 
 // Items is a handler of (GET) /v1/{name}/items/{num}
 func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
-	println(r.URL.String())
 	vars := mux.Vars(r)
 	name, ok := vars["name"]
 	r.ParseForm()
@@ -45,7 +45,6 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	println(secret)
 	bin, err := rc.Bin.Get(name, secret)
 	if err != nil {
 		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
@@ -87,6 +86,7 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 
 // In is a handler of (ANY) /v1/{name}/in/*
 func (rc *RequestController) In(w http.ResponseWriter, r *http.Request) {
+	log.WithFields(log.Fields{"uri": r.RequestURI, "body": r.Body, "header": r.Header}).Info("In")
 	vars := mux.Vars(r)
 	name := vars["name"]
 	bin, err := rc.Bin.GetWithoutSecret(name)
@@ -95,18 +95,17 @@ func (rc *RequestController) In(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req, err := domain.NewRequest(NowFunc(), r)
-	req.Bin = bin
 	if err != nil {
 		utils.RestError(w, 500, "Failed to create JSON")
 		return
 	}
+	req.Bin = bin
 	rc.Request.Add(req)
 	utils.RestSucceedObject(w, 200, req)
 }
 
 // Body is a handler of (GET) /v1/{name}/items/{num}/body
 func (rc *RequestController) Body(w http.ResponseWriter, r *http.Request) {
-	println(r.URL.String())
 	vars := mux.Vars(r)
 	name, ok := vars["name"]
 	if !ok {
@@ -120,7 +119,7 @@ func (rc *RequestController) Body(w http.ResponseWriter, r *http.Request) {
 		secret = sf[0]
 	}
 
-	bin, err := rc.Bin.Get(name,secret)
+	bin, err := rc.Bin.Get(name, secret)
 	if err != nil {
 		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
 		return

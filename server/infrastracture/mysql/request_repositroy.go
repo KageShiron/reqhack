@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/KageShiron/reqhack/server/domain"
 	"github.com/KageShiron/reqhack/server/infrastracture"
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 // mysqlRequestRepository
@@ -22,7 +22,8 @@ func NewMysqlRequestRepository(handler infrastracture.SQLHandler) infrastracture
 func (m *mysqlRequestRepository) Add(r *domain.Request) (err error) {
 	text, err := json.Marshal(r)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Error(err.Error())
+		return err
 	}
 	res, err := m.Conn.Exec("INSERT INTO `request` (bin,data) VALUES (?,?)", r.Bin.ID, text)
 	if err != nil {

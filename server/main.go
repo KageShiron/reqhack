@@ -5,10 +5,12 @@ import (
 	"github.com/KageShiron/reqhack/server/infrastracture/controller"
 	"github.com/KageShiron/reqhack/server/infrastracture/mysql"
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
 func main() {
+	log.SetFormatter(&log.JSONFormatter{})
 	router := mux.NewRouter().StrictSlash(false)
 
 	sql := infrastracture.NewSQLHandler()
