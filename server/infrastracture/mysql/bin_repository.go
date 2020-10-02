@@ -1,9 +1,13 @@
 package mysql
 
 import (
+	"fmt"
 	"github.com/KageShiron/reqhack/server/domain"
 	"github.com/KageShiron/reqhack/server/infrastracture"
+	"regexp"
 )
+
+var labelRegexp = regexp.MustCompile(`^[0-9a-zA-Z][0-9a-zA-Z\-][0-9a-zA-Z]$`)
 
 // mysqlBinRepository
 type mysqlBinRepository struct {
@@ -15,9 +19,19 @@ func NewMysqlBinRepository(handler infrastracture.SQLHandler) infrastracture.Bin
 	return &mysqlBinRepository{SQLHandler: handler}
 }
 
+func checkLabel( label string ) error {
+	if labelRegexp.MatchString(label) {
+		return nil
+	}
+	return fmt.Errorf("%s is invalid label" , label)
+}
+
 // Add adds new Bin
-func (m *mysqlBinRepository) Add(name string, secret string) (*domain.Bin, error) {
-	res, err := m.Conn.Exec("INSERT INTO `bin` (name,secret) VALUES (?,?)", name, secret)
+func (m *mysqlBinRepository) Add(label string, secret string) (*domain.Bin, error) {
+	if err := checkLabel(label); err != nil {
+		return nil, err
+	}
+	res, err := m.Conn.Exec("INSERT INTO `bin` (label,secret) VALUES (?,?)", label, secret)
 	if err != nil {
 		return nil, err
 	}
@@ -25,20 +39,26 @@ func (m *mysqlBinRepository) Add(name string, secret string) (*domain.Bin, error
 	if err != nil {
 		return nil, err
 	}
-	return &domain.Bin{ID: id, Name: name}, nil
+	return &domain.Bin{ID: id, Name: label}, nil
 }
 
 // Get returns a bin
-func (m *mysqlBinRepository) Get(name string, secret string) (bin *domain.Bin, err error) {
+func (m *mysqlBinRepository) Get(label string, secret string) (bin *domain.Bin, err error) {
+	if err := checkLabel(label); err != nil {
+		return nil, err
+	}
 	bin = &domain.Bin{}
-	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=? AND secret=?", name, secret).StructScan(bin)
+	err = m.Conn.QueryRowx("SELECT id,label FROM bin WHERE label=? AND secret=?", label, secret).StructScan(bin)
 	return
 }
 
 // Get returns a bin
-func (m *mysqlBinRepository) GetWithoutSecret(name string) (bin *domain.Bin, err error) {
+func (m *mysqlBinRepository) GetWithoutSecret(label string) (bin *domain.Bin, err error) {
+	if err := checkLabel(label); err != nil {
+		return nil, err
+	}
 	bin = &domain.Bin{}
-	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=?", name).StructScan(bin)
+	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=?", ).StructScan(bin)
 	return
 }
 

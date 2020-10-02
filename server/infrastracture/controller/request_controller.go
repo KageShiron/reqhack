@@ -34,7 +34,10 @@ func NewRequestController(req infrastracture.RequestRepository, bin infrastractu
 func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name, ok := vars["name"]
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		_ = utils.RestError(w, 400, "Invalid request")
+		return
+	}
 	secret := ""
 	if sf := r.Form["secret"]; sf != nil {
 		secret = sf[0]
@@ -47,7 +50,7 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 
 	bin, err := rc.Bin.Get(name, secret)
 	if err != nil {
-		utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
+		_ = utils.RestError(w, 404, fmt.Sprintf(`Bin "%s" not found`, name))
 		return
 	}
 
@@ -56,19 +59,19 @@ func (rc *RequestController) Items(w http.ResponseWriter, r *http.Request) {
 		//todo://
 		logs, err := rc.Request.GetRange(bin.ID, 0, 100)
 		if err != nil {
-			utils.RestError(w, 500, fmt.Sprintf("Internal Error %s", err))
+			_ = utils.RestError(w, 500, fmt.Sprintf("Internal Error %s", err))
 			return
 		}
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		if json.NewEncoder(w).Encode(logs); err != nil {
-			utils.RestError(w, 500, fmt.Sprintf(`Failed to create JSON`))
+		if err = json.NewEncoder(w).Encode(logs); err != nil {
+			_ = utils.RestError(w, 500, fmt.Sprintf(`Failed to create JSON`))
 		}
 		return
 	}
 
 	index, err := strconv.ParseInt(num, 10, 64)
 	if err != nil {
-		utils.RestError(w, 400, "Invalid index")
+		_ = utils.RestError(w, 400, "Invalid index")
 		return
 	}
 
