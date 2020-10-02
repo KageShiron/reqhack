@@ -1,4 +1,4 @@
-FROM golang:1.11.3
+FROM golang:1.15
 RUN apt update && apt upgrade -y && apt install -y mariadb-client cron
 
 ADD ./go.mod /go/src/github.com/KageShiron/reqhack/server/
