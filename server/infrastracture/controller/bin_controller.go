@@ -1,11 +1,10 @@
 package controller
 
 import (
-	"fmt"
+	"crypto/rand"
 	"github.com/KageShiron/reqhack/server/infrastracture"
 	"github.com/KageShiron/reqhack/server/utils"
 	"github.com/gorilla/mux"
-	"crypto/rand"
 	"math/big"
 	"net/http"
 )
@@ -49,7 +48,7 @@ func (b *BinController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if _, err := b.Bin.Add(v, secret); err != nil {
-		utils.RestError(w, 500, fmt.Sprintf("Bin %s already exists.", v))
+		utils.RestError(w, 500, err.Error())
 		return
 	}
 
