@@ -8,7 +8,7 @@ import (
 )
 
 var labelRegexp = regexp.MustCompile(`^([0-9a-zA-Z][0-9a-zA-Z\-]*[0-9a-zA-Z]|[0-9a-zA-Z])$`)
-var binNameRegexp = regexp.MustCompile(`[0-9a-zA-Z][0-9a-zA-Z\-][0-9a-zA-Z]$`)
+var binNameRegexp = regexp.MustCompile(`([0-9a-zA-Z][0-9a-zA-Z\-]*[0-9a-zA-Z]|[0-9a-zA-Z])$`)
 
 // mysqlBinRepository
 type mysqlBinRepository struct {
@@ -20,22 +20,23 @@ func NewMysqlBinRepository(handler infrastracture.SQLHandler) infrastracture.Bin
 	return &mysqlBinRepository{SQLHandler: handler}
 }
 
-func checkLabel( label string ) (error) {
+func checkLabel(label string) error {
 	if labelRegexp.MatchString(label) {
 		return nil
 	}
-	return fmt.Errorf("%s is invalid label" , label)
+	return fmt.Errorf("%s is invalid label", label)
 }
 
-func getBinName( label string ) string {
+func getBinName(label string) string {
 	return binNameRegexp.FindString(label)
 }
+
 // Add adds new Bin
 func (m *mysqlBinRepository) Add(label string, secret string) (*domain.Bin, error) {
 	if err := checkLabel(label); err != nil {
 		return nil, err
 	}
-	res, err := m.Conn.Exec("INSERT INTO `bin` (name,secret) VALUES (?,?)", label, secret)
+	res, err := m.Conn.Exec("INSERT INTO bin (name,secret) VALUES (?,?)", label, secret)
 	if err != nil {
 		return nil, err
 	}
@@ -50,10 +51,9 @@ func (m *mysqlBinRepository) Add(label string, secret string) (*domain.Bin, erro
 func (m *mysqlBinRepository) Get(label string, secret string) (bin *domain.Bin, err error) {
 	name := getBinName(label)
 	if name == "" {
-		return nil, fmt.Errorf("invalid hostname %s",label)
+		return nil, fmt.Errorf("invalid hostname %s", label)
 	}
 	bin = &domain.Bin{}
-	print(label,name)
 	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=? AND secret=?", name, secret).StructScan(bin)
 	return
 }
@@ -62,10 +62,11 @@ func (m *mysqlBinRepository) Get(label string, secret string) (bin *domain.Bin, 
 func (m *mysqlBinRepository) GetWithoutSecret(label string) (bin *domain.Bin, err error) {
 	name := getBinName(label)
 	if name == "" {
-		return nil, fmt.Errorf("invalid hostname %s",label)
+		return nil, fmt.Errorf("invalid hostname %s", label)
 	}
 	bin = &domain.Bin{}
-	err = m.Conn.QueryRowx("SELECT name,name FROM bin WHERE name=?", name).StructScan(bin)
+	err = m.Conn.QueryRowx("SELECT id,name FROM bin WHERE name=?", name).StructScan(bin)
+
 	return
 }
 
