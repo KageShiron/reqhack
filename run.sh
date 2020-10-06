@@ -13,6 +13,8 @@ echo xx $1
 
 if [ "$1" = "build" ]; then
     docker-compose up --build
+elif [ "$1" = "server" ]; then
+    docker-compose build --no-cache reqhack-server
 elif [ "$1" = "client" ]; then
     docker-compose build --no-cache nginx
 else
